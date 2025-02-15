@@ -1,12 +1,11 @@
-package com.rookiefit.rookiefit.auth
+package com.rookiefit.rookiefit.auth.dto.request
 
-import jakarta.annotation.Nonnull
 import jakarta.validation.constraints.NotEmpty
 
-data class UserDTO(
+data class SignUpRequestDTO(
     @NotEmpty
     val userId: String,
     @NotEmpty
     val userPassword: String,
-    val userPhoneNumber: String,
+    val userPhoneNumber: String
 )

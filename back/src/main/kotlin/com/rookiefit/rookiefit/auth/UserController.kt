@@ -1,5 +1,10 @@
 package com.rookiefit.rookiefit.auth
 
+import com.rookiefit.rookiefit.auth.dto.ResponseDTO
+import com.rookiefit.rookiefit.auth.dto.request.SignInRequestDTO
+import com.rookiefit.rookiefit.auth.dto.request.SignUpRequestDTO
+import com.rookiefit.rookiefit.auth.dto.response.SignInResponseDTO
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
@@ -16,8 +21,13 @@ class UserController(private val userService: UserService) {
         return userService.idCheck(userId)
     }
     @PostMapping("/sign-up")
-    fun signUp(@RequestBody userDTO: UserDTO): ResponseEntity<String>{
-        userService.signUp(userDTO)
-        return ResponseEntity.ok("회원가입 성공")
+    fun signUp(@RequestBody signUpRequestDTO: SignUpRequestDTO): ResponseEntity<ResponseDTO>{
+        val response = userService.signUp(signUpRequestDTO)
+        return ResponseEntity.status(HttpStatus.CREATED).body(response)
+    }
+    @PostMapping("/sign-in")
+    fun signIn(@RequestBody signInRequestDTO: SignInRequestDTO): ResponseEntity<SignInResponseDTO>{
+        val response = userService.signIn(signInRequestDTO)
+        return ResponseEntity.status(HttpStatus.OK).body(response)
     }
 }
