@@ -36,7 +36,7 @@ class JwtProvider(@Value("\${secretKey}") private val secretKey: String) {
             .compact()
     }
 
-    //토큰에서 username 추출
+    //토큰에서 유저아이디 추출
     fun extractUserId(token: String): String? {
         return getClaims(token).subject
     }
@@ -50,22 +50,27 @@ class JwtProvider(@Value("\${secretKey}") private val secretKey: String) {
             when (e) {
                 is io.jsonwebtoken.ExpiredJwtException -> {
                     println("만료된 토큰: ${e.message}")
+                    e.printStackTrace()
                     false
                 }
                 is io.jsonwebtoken.UnsupportedJwtException -> {
                     println("형식과 맞지않는 토큰: ${e.message}")
+                    e.printStackTrace()
                     false
                 }
                 is io.jsonwebtoken.ClaimJwtException -> {
                     println("JWT 권한 claim 검사 실패: ${e.message}")
+                    e.printStackTrace()
                     false
                 }
                 is io.jsonwebtoken.MalformedJwtException -> {
                     println("구조적 문제가 있는 토큰: ${e.message}")
+                    e.printStackTrace()
                     false
                 }
                 else -> {
                     println("검증 중 알수 없는 오류: ${e.message}")
+                    e.printStackTrace()
                     false
                 }
             }

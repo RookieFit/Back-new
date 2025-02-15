@@ -15,7 +15,7 @@ class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse)
     }
     @ExceptionHandler(SQLException::class)
-    fun handleException(e: Exception): ResponseEntity<ResponseDTO> {
+    fun handleDBException(e: Exception): ResponseEntity<ResponseDTO> {
         val errorResponse = ResponseDTO("SERVER_ERROR", "서버 오류가 발생했습니다.")
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse)
     }

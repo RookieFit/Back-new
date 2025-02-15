@@ -6,8 +6,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 class TestController {
-    @PreAuthorize("isAuthenticated()")
-    @GetMapping("/api/test/protected")
+    @GetMapping("/api/user/protected")
     fun protectedEndPoint(): String {
         return "접근 성공"
     }
