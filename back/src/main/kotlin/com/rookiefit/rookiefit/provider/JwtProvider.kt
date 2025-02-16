@@ -4,6 +4,7 @@ import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.JwtParser
 import io.jsonwebtoken.SignatureAlgorithm
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import java.security.Key
@@ -12,6 +13,7 @@ import javax.crypto.spec.SecretKeySpec
 
 @Component
 class JwtProvider(@Value("\${secretKey}") private val secretKey: String) {
+    private val logger = LoggerFactory.getLogger(JwtProvider::class.java)
     private val expirationTime: Long = 3600000
 
     //접근 토큰 생성
@@ -50,27 +52,27 @@ class JwtProvider(@Value("\${secretKey}") private val secretKey: String) {
             when (e) {
                 is io.jsonwebtoken.ExpiredJwtException -> {
                     println("만료된 토큰: ${e.message}")
-                    e.printStackTrace()
+                    logger.error("만료된 토큰: {}", e.message, e)
                     false
                 }
                 is io.jsonwebtoken.UnsupportedJwtException -> {
                     println("형식과 맞지않는 토큰: ${e.message}")
-                    e.printStackTrace()
+                    logger.error("형식과 맞지않는 토큰: {}", e.message, e)
                     false
                 }
                 is io.jsonwebtoken.ClaimJwtException -> {
                     println("JWT 권한 claim 검사 실패: ${e.message}")
-                    e.printStackTrace()
+                    logger.error("JWT 권한 claim 검사 실패: {}", e.message, e)
                     false
                 }
                 is io.jsonwebtoken.MalformedJwtException -> {
                     println("구조적 문제가 있는 토큰: ${e.message}")
-                    e.printStackTrace()
+                    logger.error("구조적 문제가 있는 토큰: {}", e.message, e)
                     false
                 }
                 else -> {
                     println("검증 중 알수 없는 오류: ${e.message}")
-                    e.printStackTrace()
+                    logger.error("검증 중 알수 없는 오류: {}", e.message, e)
                     false
                 }
             }

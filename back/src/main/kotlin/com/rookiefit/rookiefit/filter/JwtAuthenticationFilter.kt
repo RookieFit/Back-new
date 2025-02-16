@@ -37,24 +37,29 @@ class JwtAuthenticationFilter(
 
             if (userId != null) {
                 if (jwtProvider.validateToken(token)) {
-                    val userEntity: UserEntity = userRepository.findByUserId(userId)
+                    val userEntity: UserEntity? = userRepository.findByUserId(userId)
+                    if(userEntity == null){
+                        response.status = HttpServletResponse.SC_NOT_FOUND
+                        response.writer.write("사용자를 찾을수 없습니다")
+                        return
+                    }
                     val authorities = listOf(SimpleGrantedAuthority(userEntity.role))
                     val authToken = UsernamePasswordAuthenticationToken(userId, null, authorities)
                     authToken.details = WebAuthenticationDetailsSource().buildDetails(request)
                     SecurityContextHolder.getContext().authentication = authToken
                 } else {
                     response.status = HttpServletResponse.SC_UNAUTHORIZED
-                    response.writer.write("Token is invalid or expired")
+                    response.writer.write("유효하지않은 토큰")
                     return
                 }
             } else {
                 response.status = HttpServletResponse.SC_UNAUTHORIZED
-                response.writer.write("Invalid token")
+                response.writer.write("유효하지않은 토큰")
                 return
             }
         } else {
             response.status = HttpServletResponse.SC_UNAUTHORIZED
-            response.writer.write("Token is missing")
+            response.writer.write("누락된 토큰")
             return
         }
         filterChain.doFilter(request, response)
