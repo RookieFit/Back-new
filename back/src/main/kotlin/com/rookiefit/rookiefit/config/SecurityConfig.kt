@@ -4,6 +4,7 @@ import com.rookiefit.rookiefit.auth.UserRepository
 import com.rookiefit.rookiefit.filter.JwtAuthenticationFilter
 import com.rookiefit.rookiefit.handler.CustomAuthenticationEntryPoint
 import com.rookiefit.rookiefit.provider.JwtProvider
+import jakarta.servlet.http.HttpServletResponse
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
@@ -24,7 +25,13 @@ class SecurityConfig(
         http
             .authorizeHttpRequests { auth ->
                 auth
-                    .requestMatchers("/","/api/auth/**", "/error").permitAll()
+                    .requestMatchers(
+                        "/",
+                        "/api/auth/**",
+                        "/error",
+                        "/v3/api-docs/**",
+                        "/swagger-ui/**",
+                    ).permitAll()
                     .requestMatchers("/api/user/**").hasRole("USER")
                     .anyRequest().authenticated()
             }
@@ -33,7 +40,13 @@ class SecurityConfig(
             }
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .addFilterBefore(JwtAuthenticationFilter(jwtProvider, userRepository), UsernamePasswordAuthenticationFilter::class.java)
-            .exceptionHandling { it.authenticationEntryPoint(entryPoint) }
+            .exceptionHandling {
+                it.authenticationEntryPoint(entryPoint)
+                it.accessDeniedHandler { request, response, accessDeniedException ->
+                    response.status = HttpServletResponse.SC_FORBIDDEN
+                    response.writer.write("{\"code\": \"NP\", \"message\": \"No permission\"}")
+                }
+            }
         return http.build()
     }
 }
