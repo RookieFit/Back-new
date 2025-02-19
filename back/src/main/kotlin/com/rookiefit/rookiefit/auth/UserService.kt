@@ -17,6 +17,17 @@ class UserService(
 ) {
     private val passwordEncoder = BCryptPasswordEncoder()
 
+    fun refreshToken(refreshToken: String): SignInResponseDTO? {
+        if(jwtProvider.validateToken(refreshToken)) {
+            val userId = jwtProvider.extractUserId(refreshToken)
+                ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "존재하지 않는 사용자")
+            val newAccessToken = jwtProvider.generateAccessToken(userId)
+            val newRefreshToken = jwtProvider.generateRefreshToken(userId)
+            return SignInResponseDTO(newAccessToken, newRefreshToken)
+        }
+        throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
+    }
+
     fun idCheck(userId: String): Boolean{
         val isExisted = userRepository.existsByUserId(userId)
         return !isExisted
