@@ -39,14 +39,10 @@ class SecurityConfig(
                 csrf.disable() //테스트단계에서 비활성화
             }
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
-            .addFilterBefore(JwtAuthenticationFilter(jwtProvider, userRepository), UsernamePasswordAuthenticationFilter::class.java)
             .exceptionHandling {
                 it.authenticationEntryPoint(entryPoint)
-                it.accessDeniedHandler { request, response, accessDeniedException ->
-                    response.status = HttpServletResponse.SC_FORBIDDEN
-                    response.writer.write("{\"code\": \"NP\", \"message\": \"No permission\"}")
-                }
             }
+            .addFilterBefore(JwtAuthenticationFilter(jwtProvider, userRepository), UsernamePasswordAuthenticationFilter::class.java)
         return http.build()
     }
 }
