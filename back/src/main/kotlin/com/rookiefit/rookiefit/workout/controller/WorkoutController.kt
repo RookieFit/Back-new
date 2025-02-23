@@ -2,10 +2,14 @@ package com.rookiefit.rookiefit.workout.controller
 
 import com.rookiefit.rookiefit.auth.dto.ResponseDTO
 import com.rookiefit.rookiefit.workout.dto.WorkoutDTO
+import com.rookiefit.rookiefit.workout.dto.response.WorkoutResponseDTO
+import com.rookiefit.rookiefit.workout.entity.WorkoutEntity
 import com.rookiefit.rookiefit.workout.service.WorkoutService
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestPart
@@ -22,5 +26,12 @@ class WorkoutController(private val workoutService: WorkoutService) {
     ) : ResponseEntity<ResponseDTO> {
         val responseBody = workoutService.createWorkout(workoutDTO)
         return ResponseEntity.status(HttpStatus.CREATED).body(responseBody)
+    }
+    @GetMapping("/getworkout")
+    fun getWorkout(): List<WorkoutResponseDTO> {
+        val authentication = SecurityContextHolder.getContext().authentication
+        val currentUserId = authentication?.principal as? String
+        val responseBody = workoutService.getWorkout(currentUserId)
+        return responseBody
     }
 }

@@ -3,6 +3,7 @@ package com.rookiefit.rookiefit.workout.service
 import com.rookiefit.rookiefit.auth.dto.ResponseDTO
 import com.rookiefit.rookiefit.workout.dto.WorkoutDTO
 import com.rookiefit.rookiefit.workout.dto.WorkoutDetailDTO
+import com.rookiefit.rookiefit.workout.dto.response.WorkoutResponseDTO
 import com.rookiefit.rookiefit.workout.entity.WorkoutDetailEntity
 import com.rookiefit.rookiefit.workout.entity.WorkoutEntity
 import com.rookiefit.rookiefit.workout.repository.WorkoutRepository
@@ -32,5 +33,17 @@ class WorkoutService(
         workoutEntity.workoutDetails.addAll(workoutDetailEntities)
         workoutRepository.save(workoutEntity)
         return ResponseDTO("CREATE_WORKOUT_SUCCESS", "저장되었습니다.")
+    }
+
+    //todo: 해당유저의 정보를 이미지 추가해서 넘겨줄것
+    fun getWorkout(currentUserId: String): List<WorkoutResponseDTO> {
+        val workoutEntities = workoutRepository.findAll()
+        return workoutEntities.map {
+            entity -> WorkoutResponseDTO(
+                workoutTitle = entity.workoutTitle,
+                workoutComment = entity.workoutComment,
+                workoutCreatedDate = entity.workoutCreatedDate
+            )
+        }
     }
 }
