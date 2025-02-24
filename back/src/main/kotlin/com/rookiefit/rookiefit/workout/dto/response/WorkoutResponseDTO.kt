@@ -4,5 +4,5 @@ data class WorkoutResponseDTO(
     val workoutTitle: String,
     val workoutComment: String,
     val workoutCreatedDate: String,
-    //val workoutImageUris: List<String>
+    val workoutImageUris: List<String>
 )
