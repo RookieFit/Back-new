@@ -13,5 +13,7 @@ class WorkoutEntity (
     var workoutComment: String = "",
     var dailyCaloriesBurned: Int = 0,
     @OneToMany(mappedBy = "workout", cascade = [(CascadeType.ALL)], orphanRemoval = true)
-    var workoutDetails: MutableList<WorkoutDetailEntity> = mutableListOf()
+    var workoutDetails: MutableList<WorkoutDetailEntity> = mutableListOf(),
+    @OneToMany(mappedBy = "workout", cascade = [CascadeType.ALL], orphanRemoval = true)
+    var images: MutableList<WorkoutImageUriEntity> = mutableListOf()
     )

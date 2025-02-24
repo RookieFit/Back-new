@@ -3,7 +3,6 @@ package com.rookiefit.rookiefit.workout.controller
 import com.rookiefit.rookiefit.auth.dto.ResponseDTO
 import com.rookiefit.rookiefit.workout.dto.WorkoutDTO
 import com.rookiefit.rookiefit.workout.dto.response.WorkoutResponseDTO
-import com.rookiefit.rookiefit.workout.entity.WorkoutEntity
 import com.rookiefit.rookiefit.workout.service.WorkoutService
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -18,13 +17,16 @@ import org.springframework.web.multipart.MultipartFile
 
 @RestController
 @RequestMapping("/api/user/workout")
-class WorkoutController(private val workoutService: WorkoutService) {
+class WorkoutController(
+    private val workoutService: WorkoutService
+) {
     @PostMapping(value = ["/create"], consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
     fun createWorkout(
         @RequestPart("workout") workoutDTO: WorkoutDTO,
         @RequestPart("images", required = false) images: List<MultipartFile>?,
     ) : ResponseEntity<ResponseDTO> {
-        val responseBody = workoutService.createWorkout(workoutDTO)
+        println("images: "+images)
+        val responseBody = workoutService.createWorkout(workoutDTO, images)
         return ResponseEntity.status(HttpStatus.CREATED).body(responseBody)
     }
     @GetMapping("/getworkout")

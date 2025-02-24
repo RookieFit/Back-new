@@ -20,6 +20,6 @@ class WorkoutDetailEntity (
     var restTime: String = "",
     var workoutCreatedDate: String = "",
     @ManyToOne
-    @JoinColumn(name = "workoutId")
+    @JoinColumn(name = "workout_id")
     var workout: WorkoutEntity? = null
 )
