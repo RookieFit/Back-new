@@ -50,7 +50,7 @@ class WorkoutService(
         return ResponseDTO("CREATE_WORKOUT_SUCCESS", "저장되었습니다.")
     }
 
-    //todo: 해당유저의 정보를 이미지 추가해서 넘겨줄것
+    //todo: 해당유저의 정보를 넘겨줄것
     fun getWorkout(currentUserId: String?): List<WorkoutResponseDTO> {
         val workoutEntities = workoutRepository.findAll()
         return workoutEntities.map {
@@ -63,6 +63,7 @@ class WorkoutService(
         }
     }
 
+    //todo: 해당유저의 정보를 넘겨줄것
     fun getWorkoutDetail(currentUserId: String?, currentDate: String): List<WorkoutDetailResponseDTO> {
         val workoutDetailEntities = workoutDetailRepository.findByWorkoutCreatedDate(currentDate)
         return workoutDetailEntities.map {

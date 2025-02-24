@@ -2,6 +2,7 @@ package com.rookiefit.rookiefit.common
 
 import com.google.cloud.storage.Storage
 import com.google.firebase.cloud.StorageClient
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import java.io.ByteArrayOutputStream
@@ -13,6 +14,9 @@ class FirebaseService(
     private val storage: Storage,
     private val storageClient: StorageClient
 ) {
+    private companion object {
+        private val LOG = LoggerFactory.getLogger(FirebaseService::class.java)
+    }
     fun uploadImageFile(file: MultipartFile): String {
         val buckName = "rookiefit-edf53"
         val originalFileName = file.originalFilename
@@ -21,10 +25,9 @@ class FirebaseService(
         val inputStream = file.inputStream
         val image = ImageIO.read(inputStream)
         if (image == null) {
-            println("이미지 파일이 손상되었거나 유효하지 않습니다.")
+            LOG.error("이미지를 읽을 수 없습니다")
             throw Exception("Image not found")
         }
-        println("이미지 읽기 성공")
 
         val byteArrayOutputStream = ByteArrayOutputStream()
         ImageIO.write(image, "jpg", byteArrayOutputStream)
@@ -36,7 +39,7 @@ class FirebaseService(
         try {
             storageClient.bucket(buckName).create(fileName, imageData, "image/jpg")
         } catch (e: Exception) {
-            println("파일 업로드 중 오류 발생: ${e.message}")
+            LOG.error("파일 업로드 중 오류 발생: ${e.message}\", e")
             throw e
         }
         val encodedFileName = URLEncoder.encode(fileName, "UTF-8")
