@@ -7,9 +7,9 @@ import jakarta.persistence.*
 class WorkoutImageUriEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var imageId: Long = 0,
-    var imageUri: String = "",
-    var imageUriCreatedDate: String = "",
+    var workoutImageId: Long = 0,
+    var workoutImageUri: String = "",
+    var workoutImageUriCreatedDate: String = "",
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "workout_id")
     var workout: WorkoutEntity? = null,

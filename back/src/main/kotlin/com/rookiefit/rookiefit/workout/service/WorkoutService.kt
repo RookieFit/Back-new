@@ -44,7 +44,11 @@ class WorkoutService(
         workoutRepository.save(workoutEntity)
         val imageUris: List<String>? = images?.let { firebaseService.uploadImageFiles(it) }
         imageUris?.forEach { imageUrl ->
-            val imageEntity = WorkoutImageUriEntity(imageUri = imageUrl, workout = workoutEntity)
+            val imageEntity = WorkoutImageUriEntity(
+                workoutImageUri = imageUrl, 
+                workoutImageUriCreatedDate = workoutDTO.workoutCreatedDate,
+                workout = workoutEntity
+            )
             workoutImageRepository.save(imageEntity)
         }
         return ResponseDTO("CREATE_WORKOUT_SUCCESS", "저장되었습니다.")
@@ -58,7 +62,7 @@ class WorkoutService(
                 workoutTitle = entity.workoutTitle,
                 workoutComment = entity.workoutComment,
                 workoutCreatedDate = entity.workoutCreatedDate,
-                workoutImageUris = workoutImageRepository.findByWorkout(entity).map { it.imageUri }
+                workoutImageUris = workoutImageRepository.findByWorkout(entity).map { it.workoutImageUri }
             )
         }
     }

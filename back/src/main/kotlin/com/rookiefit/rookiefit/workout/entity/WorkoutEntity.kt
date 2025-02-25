@@ -15,5 +15,5 @@ class WorkoutEntity (
     @OneToMany(mappedBy = "workout", cascade = [(CascadeType.ALL)], orphanRemoval = true)
     var workoutDetails: MutableList<WorkoutDetailEntity> = mutableListOf(),
     @OneToMany(mappedBy = "workout", cascade = [CascadeType.ALL], orphanRemoval = true)
-    var images: MutableList<WorkoutImageUriEntity> = mutableListOf()
+    var workoutImages: MutableList<WorkoutImageUriEntity> = mutableListOf()
     )
