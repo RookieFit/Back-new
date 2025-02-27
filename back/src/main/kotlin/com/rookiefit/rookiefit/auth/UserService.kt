@@ -21,7 +21,6 @@ class UserService(
     private val passwordEncoder = BCryptPasswordEncoder()
 
     fun getRefreshTokenFromCookie(request: HttpServletRequest): String? {
-        println("hi")
         val cookies = request.cookies
         if (cookies != null) {
             // 쿠키 배열을 순회하여 name과 value 출력
