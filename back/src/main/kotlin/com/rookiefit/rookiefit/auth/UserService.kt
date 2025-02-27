@@ -27,7 +27,7 @@ class UserService(
         if (cookies != null) {
             // 쿠키 배열을 순회하여 name과 value 출력
             cookies.forEach { cookie ->
-                log.debug("Cookie Name: {}, Cookie Value: {}", cookie.name, cookie.value)
+                log.debug("Cookie Name: {}", cookie.name)
             }
         } else {
             log.debug("No cookies found")
