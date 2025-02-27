@@ -66,6 +66,7 @@ class UserService(
         val accessToken = jwtProvider.generateAccessToken(user.userId)
         val refreshToken = jwtProvider.generateRefreshToken(user.userId)
 
+        //todo: https연결후 secure값 true로 변경할것
         val refreshTokenCookie = Cookie("refreshToken", refreshToken).apply {
             isHttpOnly = true
             secure = false  // HTTPS 환경에서만 사용하려면 true로 설정
