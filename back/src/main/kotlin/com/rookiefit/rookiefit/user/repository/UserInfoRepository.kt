@@ -1,0 +1,7 @@
+package com.rookiefit.rookiefit.user.repository
+
+import com.rookiefit.rookiefit.user.entity.UserInfoEntity
+import org.springframework.data.jpa.repository.JpaRepository
+
+interface UserInfoRepository: JpaRepository<UserInfoEntity, Long> {
+}
