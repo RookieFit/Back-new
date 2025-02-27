@@ -3,6 +3,8 @@ package com.rookiefit.rookiefit.filter
 import com.rookiefit.rookiefit.auth.UserEntity
 import com.rookiefit.rookiefit.auth.UserRepository
 import com.rookiefit.rookiefit.provider.JwtProvider
+import io.jsonwebtoken.ExpiredJwtException
+import io.jsonwebtoken.MalformedJwtException
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
@@ -20,29 +22,31 @@ class JwtAuthenticationFilter(
     private val jwtProvider: JwtProvider,
     private val userRepository: UserRepository
 ) : OncePerRequestFilter() {
+
     override fun doFilterInternal(
         request: HttpServletRequest,
         response: HttpServletResponse,
         filterChain: FilterChain
     ) {
-        if (
-            request.requestURI.startsWith("/api/auth") ||
+        // Swagger, API Docs 등의 URL은 인증을 생략
+        if (request.requestURI.startsWith("/api/auth") ||
             request.requestURI.startsWith("/v3/api-docs") ||
-            request.requestURI.startsWith("/swagger-ui")
-            ) {
-            with(filterChain) { doFilter(request, response) }
+            request.requestURI.startsWith("/swagger-ui")) {
+            filterChain.doFilter(request, response)
             return
         }
+
         val authorizationHeader = request.getHeader("Authorization")
 
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             val token = authorizationHeader.substring(7)
-            val userId = jwtProvider.extractUserId(token)
 
-            if (userId != null) {
+            try {
+                val userId = jwtProvider.extractUserId(token)
+
                 if (jwtProvider.validateToken(token)) {
                     val userEntity: UserEntity? = userRepository.findByUserId(userId)
-                    if(userEntity == null){
+                    if (userEntity == null) {
                         response.status = HttpServletResponse.SC_NOT_FOUND
                         response.writer.write("NOT FOUND USER")
                         return
@@ -53,12 +57,23 @@ class JwtAuthenticationFilter(
                     SecurityContextHolder.getContext().authentication = authToken
                 } else {
                     response.status = HttpServletResponse.SC_UNAUTHORIZED
-                    response.writer.write("INVAILD OR EXPIRED TOKEN")
+                    response.writer.write("INVALID OR EXPIRED TOKEN")
                     return
                 }
-            } else {
+            } catch (e: MalformedJwtException) {
+                // Malformed JWT 처리
                 response.status = HttpServletResponse.SC_UNAUTHORIZED
-                response.writer.write("INVAILD TOKEN")
+                response.writer.write("Invalid JWT token format")
+                return
+            } catch (e: ExpiredJwtException) {
+                // Expired JWT 처리
+                response.status = HttpServletResponse.SC_UNAUTHORIZED
+                response.writer.write("Expired JWT token")
+                return
+            } catch (e: Exception) {
+                // 기타 예외 처리
+                response.status = HttpServletResponse.SC_UNAUTHORIZED
+                response.writer.write("Unauthorized request")
                 return
             }
         } else {

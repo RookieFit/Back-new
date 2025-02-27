@@ -3,8 +3,11 @@ package com.rookiefit.rookiefit.auth
 import com.rookiefit.rookiefit.auth.dto.ResponseDTO
 import com.rookiefit.rookiefit.auth.dto.request.SignInRequestDTO
 import com.rookiefit.rookiefit.auth.dto.request.SignUpRequestDTO
-import com.rookiefit.rookiefit.auth.dto.response.SignInResponseDTO
 import com.rookiefit.rookiefit.provider.JwtProvider
+import jakarta.servlet.http.Cookie
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
+import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
@@ -17,15 +20,18 @@ class UserService(
 ) {
     private val passwordEncoder = BCryptPasswordEncoder()
 
-    fun refreshToken(refreshToken: String): SignInResponseDTO? {
-        if(jwtProvider.validateToken(refreshToken)) {
-            val userId = jwtProvider.extractUserId(refreshToken)
-                ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "존재하지 않는 사용자")
-            val newAccessToken = jwtProvider.generateAccessToken(userId)
-            val newRefreshToken = jwtProvider.generateRefreshToken(userId)
-            return SignInResponseDTO(newAccessToken, newRefreshToken)
+    fun getRefreshTokenFromCookie(request: HttpServletRequest): String? {
+        println("hi")
+        val cookies = request.cookies
+        if (cookies != null) {
+            // 쿠키 배열을 순회하여 name과 value 출력
+            cookies.forEach { cookie ->
+                println("Cookie Name: ${cookie.name}, Cookie Value: ${cookie.value}")
+            }
+        } else {
+            println("No cookies found")
         }
-        throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
+        return cookies?.find { it.name == "refreshToken" }?.value
     }
 
     fun idCheck(userId: String): Boolean{
@@ -48,7 +54,7 @@ class UserService(
         return ResponseDTO("SIGN_UP_SUCCESS", "회원가입 성공")
     }
 
-    fun signIn(signInRequestDTO: SignInRequestDTO): SignInResponseDTO? {
+    fun signIn(signInRequestDTO: SignInRequestDTO, response: HttpServletResponse): String? {
         val user = userRepository.findByUserId(signInRequestDTO.userId)
             ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "존재하지 않는 사용자")
         val currentPassword = signInRequestDTO.userPassword
@@ -58,6 +64,14 @@ class UserService(
 
         val accessToken = jwtProvider.generateAccessToken(user.userId)
         val refreshToken = jwtProvider.generateRefreshToken(user.userId)
-        return SignInResponseDTO(accessToken, refreshToken)
+
+        val refreshTokenCookie = Cookie("refreshToken", refreshToken).apply {
+            isHttpOnly = true
+            secure = false  // HTTPS 환경에서만 사용하려면 true로 설정
+            path = "/"  // 모든 경로에서 쿠키 사용
+            maxAge = 7 * 24 * 60 * 60  // 일주일 유효
+        }
+        response.addCookie(refreshTokenCookie)
+        return accessToken
     }
 }
