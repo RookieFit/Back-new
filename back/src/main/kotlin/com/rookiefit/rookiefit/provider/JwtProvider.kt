@@ -33,13 +33,13 @@ class JwtProvider(@Value("\${secretKey}") private val secretKey: String) {
         return Jwts.builder()
             .setSubject(userId)
             .setIssuedAt(Date())
-            .setExpiration(Date(System.currentTimeMillis() + 604800000)) // 7주일
+            .setExpiration(Date(System.currentTimeMillis() + 604800000)) // 일주일
             .signWith(key)
             .compact()
     }
 
     //토큰에서 유저아이디 추출
-    fun extractUserId(token: String): String? {
+    fun extractUserId(token: String): String {
         return getClaims(token).subject
     }
 
@@ -50,6 +50,7 @@ class JwtProvider(@Value("\${secretKey}") private val secretKey: String) {
             true
         }catch (e: Exception) {
             handleJwtException(e)
+            false
         }
     }
 

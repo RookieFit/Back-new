@@ -1,6 +1,8 @@
 package com.rookiefit.rookiefit.handler
 
 import com.rookiefit.rookiefit.auth.dto.ResponseDTO
+import io.jsonwebtoken.ExpiredJwtException
+import io.jsonwebtoken.MalformedJwtException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ControllerAdvice
