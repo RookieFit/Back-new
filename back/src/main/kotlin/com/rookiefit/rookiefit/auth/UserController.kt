@@ -25,15 +25,9 @@ class UserController(
     @PostMapping("/refresh")
     fun refreshToken(request: HttpServletRequest): String {
         val refreshToken = userService.getRefreshTokenFromCookie(request)
-        if (refreshToken == null) {
-            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "유효하지 않은 리프레시 토큰")
-        }
-
+            ?: throw ResponseStatusException(HttpStatus.BAD_REQUEST, "유효하지 않은 리프레시 토큰")
         val userId = jwtProvider.extractUserId(refreshToken)
-        println("userid=$userId")
         val accessToken = jwtProvider.generateAccessToken(userId)
-
-        println("newAccessToken=$accessToken")
         return accessToken
     }
 

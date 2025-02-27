@@ -8,6 +8,7 @@ import io.jsonwebtoken.MalformedJwtException
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import org.slf4j.LoggerFactory
 import org.springframework.core.annotation.Order
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.authority.SimpleGrantedAuthority
@@ -22,6 +23,10 @@ class JwtAuthenticationFilter(
     private val jwtProvider: JwtProvider,
     private val userRepository: UserRepository
 ) : OncePerRequestFilter() {
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(JwtAuthenticationFilter::class.java)
+    }
 
     override fun doFilterInternal(
         request: HttpServletRequest,
@@ -62,16 +67,19 @@ class JwtAuthenticationFilter(
                 }
             } catch (e: MalformedJwtException) {
                 // Malformed JWT 처리
+                logger.error("Malformed JWT exception occurred", e)
                 response.status = HttpServletResponse.SC_UNAUTHORIZED
                 response.writer.write("Invalid JWT token format")
                 return
             } catch (e: ExpiredJwtException) {
                 // Expired JWT 처리
+                logger.error("Expired JWT token exception occurred", e)
                 response.status = HttpServletResponse.SC_UNAUTHORIZED
                 response.writer.write("Expired JWT token")
                 return
             } catch (e: Exception) {
                 // 기타 예외 처리
+                logger.error("Unauthorized request exception occurred", e)
                 response.status = HttpServletResponse.SC_UNAUTHORIZED
                 response.writer.write("Unauthorized request")
                 return

@@ -7,6 +7,7 @@ import com.rookiefit.rookiefit.provider.JwtProvider
 import jakarta.servlet.http.Cookie
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
@@ -19,16 +20,17 @@ class UserService(
     private val jwtProvider: JwtProvider
 ) {
     private val passwordEncoder = BCryptPasswordEncoder()
+    private val log = LoggerFactory.getLogger(UserService::class.java)
 
     fun getRefreshTokenFromCookie(request: HttpServletRequest): String? {
         val cookies = request.cookies
         if (cookies != null) {
             // 쿠키 배열을 순회하여 name과 value 출력
             cookies.forEach { cookie ->
-                println("Cookie Name: ${cookie.name}, Cookie Value: ${cookie.value}")
+                log.debug("Cookie Name: {}, Cookie Value: {}", cookie.name, cookie.value)
             }
         } else {
-            println("No cookies found")
+            log.debug("No cookies found")
         }
         return cookies?.find { it.name == "refreshToken" }?.value
     }
