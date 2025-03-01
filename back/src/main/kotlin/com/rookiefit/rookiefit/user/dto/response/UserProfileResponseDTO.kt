@@ -6,4 +6,5 @@ data class UserProfileResponseDTO(
     val userProfileMessage: String,
     val userProfileGymName: String,
     val userProfileImageUri: String,
+    val userProfileName: String
 )

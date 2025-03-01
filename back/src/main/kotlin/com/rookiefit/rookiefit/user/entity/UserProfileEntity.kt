@@ -5,6 +5,7 @@ import com.rookiefit.rookiefit.workout.entity.WorkoutEntity
 import jakarta.persistence.*
 
 @Entity
+@Table(name = "user_profile")
 class UserProfileEntity (
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -14,6 +15,7 @@ class UserProfileEntity (
     var userProfileImageUri : String = "",
     var userProfileMessage: String = "",
     var userProfileGymName : String = "",
+    var userProfileName: String = "",
     @OneToOne
     @JoinColumn(name = "user_id")
     var user: UserEntity,

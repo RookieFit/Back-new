@@ -54,8 +54,10 @@ class UserService(
             role = "ROLE_USER",
             type = "app"
         )
+        val currentUserid = signUpRequestDTO.userId
+        val maskPart = "*".repeat(currentUserid.length - 2)
         val userProfile = UserProfileEntity(
-            userProfileNickname = "${signUpRequestDTO.userId}-rookiefit",
+            userProfileNickname = "rookiefit-${currentUserid.take(2)}${maskPart}",
             userProfileImageUri = defaultImage,
             user = userEntity
         )

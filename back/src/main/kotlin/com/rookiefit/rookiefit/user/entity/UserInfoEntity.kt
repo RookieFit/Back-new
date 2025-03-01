@@ -7,7 +7,6 @@ class UserInfoEntity (
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val userInfoId : Long = 0,
-    var userInfoName: String = "",
     var userInfoAge: Int = 0,
     var userInfoWeight: Double = 0.0,
     var userInfoHeight: Double = 0.0,
@@ -17,5 +16,5 @@ class UserInfoEntity (
     var userInfoBasalMetabolicRate: Double = 0.0,
     @ManyToOne
     @JoinColumn(name = "user_profile_id")
-    var userProfile: UserProfileEntity,
+    var userProfile: UserProfileEntity?,
 )

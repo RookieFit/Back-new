@@ -1,11 +1,9 @@
-package com.rookiefit.rookiefit.user.dto
+package com.rookiefit.rookiefit.user.dto.response
 
-data class UserInfoDTO(
+data class UserInfoResponseDTO(
     val userInfoAge: Int,
     val userInfoWeight: Double,
     val userInfoHeight: Double,
     val userInfoMuscleMass: Double,
     val userInfoFatMass: Double,
-    val userInfoInBodyDate: String,
-    val userBasalMetabolicRate: Double,
 )
