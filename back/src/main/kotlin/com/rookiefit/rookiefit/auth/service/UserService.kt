@@ -1,8 +1,10 @@
-package com.rookiefit.rookiefit.auth
+package com.rookiefit.rookiefit.auth.service
 
 import com.rookiefit.rookiefit.auth.dto.ResponseDTO
 import com.rookiefit.rookiefit.auth.dto.request.SignInRequestDTO
 import com.rookiefit.rookiefit.auth.dto.request.SignUpRequestDTO
+import com.rookiefit.rookiefit.auth.entity.UserEntity
+import com.rookiefit.rookiefit.auth.repository.UserRepository
 import com.rookiefit.rookiefit.provider.JwtProvider
 import com.rookiefit.rookiefit.user.entity.UserProfileEntity
 import org.springframework.beans.factory.annotation.Value
@@ -10,7 +12,6 @@ import jakarta.servlet.http.Cookie
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.slf4j.LoggerFactory
-import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service

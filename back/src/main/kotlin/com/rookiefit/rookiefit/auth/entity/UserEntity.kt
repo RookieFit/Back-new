@@ -1,4 +1,4 @@
-package com.rookiefit.rookiefit.auth
+package com.rookiefit.rookiefit.auth.entity
 
 import com.rookiefit.rookiefit.user.entity.UserProfileEntity
 import jakarta.persistence.*
@@ -34,3 +34,4 @@ class UserEntity (
     @OneToOne(mappedBy = "user", cascade = [CascadeType.ALL], orphanRemoval = true)
     var userProfile: UserProfileEntity? = null
 )
+
