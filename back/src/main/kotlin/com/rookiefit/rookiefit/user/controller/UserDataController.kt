@@ -29,7 +29,7 @@ class UserDataController(
         @RequestPart("profileimage", required = false) userProfileImage: MultipartFile?
     ): ResponseEntity<ResponseDTO> {
         val authentication = SecurityContextHolder.getContext().authentication
-        val currentUserId = authentication?.principal as? String
+        val currentUserId = authentication?.principal as String
         val responseBody = userDataService.updateUserData(currentUserId, userProfileDTO, userProfileImage)
         return ResponseEntity.status(HttpStatus.CREATED).body(responseBody)
     }
@@ -37,7 +37,7 @@ class UserDataController(
     @PostMapping("/createuserinfo")
     fun createUserInfo(@RequestBody userInfoDTO: UserInfoDTO): ResponseEntity<ResponseDTO> {
         val authentication = SecurityContextHolder.getContext().authentication
-        val currentUserId = authentication?.principal as? String
+        val currentUserId = authentication?.principal as String
         val responseBody = userDataService.createUserInfo(userInfoDTO, currentUserId)
         return ResponseEntity.status(HttpStatus.CREATED).body(responseBody)
     }
@@ -45,7 +45,7 @@ class UserDataController(
     @GetMapping("/getprofile")
     fun getUserProfile(): UserProfileResponseDTO? {
         val authentication = SecurityContextHolder.getContext().authentication
-        val currentUserId = authentication?.principal as? String
+        val currentUserId = authentication?.principal as String
         val responseBody = userDataService.getUserProfile(currentUserId)
         return responseBody
     }
@@ -53,7 +53,7 @@ class UserDataController(
     @GetMapping("/getuserinfo")
     fun getUserInfo(): UserInfoResponseDTO? {
         val authentication = SecurityContextHolder.getContext().authentication
-        val currentUserId = authentication?.principal as? String
+        val currentUserId = authentication?.principal as String
         val responseBody = userDataService.getUserInfo(currentUserId)
         return responseBody
     }

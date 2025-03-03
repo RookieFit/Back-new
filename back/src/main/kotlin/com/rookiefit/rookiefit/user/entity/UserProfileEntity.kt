@@ -1,6 +1,6 @@
 package com.rookiefit.rookiefit.user.entity
 
-import com.rookiefit.rookiefit.auth.UserEntity
+import com.rookiefit.rookiefit.auth.entity.UserEntity
 import com.rookiefit.rookiefit.workout.entity.WorkoutEntity
 import jakarta.persistence.*
 

@@ -1,7 +1,7 @@
 package com.rookiefit.rookiefit.user.service
 
-import com.rookiefit.rookiefit.auth.UserRepository
 import com.rookiefit.rookiefit.auth.dto.ResponseDTO
+import com.rookiefit.rookiefit.auth.repository.UserRepository
 import com.rookiefit.rookiefit.common.FirebaseService
 import com.rookiefit.rookiefit.user.dto.UserInfoDTO
 import com.rookiefit.rookiefit.user.dto.UserProfileDTO
@@ -28,7 +28,7 @@ class UserDataService(
 ) {
     @Transactional
     fun updateUserData(
-        currentUserId: String?,
+        currentUserId: String,
         userProfileDTO: UserProfileDTO,
         userProfileImage: MultipartFile?
     ): ResponseDTO {
@@ -61,7 +61,7 @@ class UserDataService(
         return ResponseDTO("CREATE_PROFILE_SUCCESS", "유저 프로필 생성")
     }
 
-    fun createUserInfo(userInfoDTO: UserInfoDTO, currentUserId: String?): ResponseDTO {
+    fun createUserInfo(userInfoDTO: UserInfoDTO, currentUserId: String): ResponseDTO {
         userRepository.findByUserId(currentUserId)
             ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "존재하지 않는 사용자")
         val userProfileEntity = userProfileRepository.findByUser_UserId(currentUserId)
