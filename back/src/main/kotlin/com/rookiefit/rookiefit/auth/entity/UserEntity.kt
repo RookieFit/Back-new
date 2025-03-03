@@ -1,4 +1,4 @@
-package com.rookiefit.rookiefit.auth
+package com.rookiefit.rookiefit.auth.entity
 
 import jakarta.persistence.Column
 import jakarta.persistence.Entity

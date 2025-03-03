@@ -1,5 +1,6 @@
-package com.rookiefit.rookiefit.auth
+package com.rookiefit.rookiefit.auth.controller
 
+import com.rookiefit.rookiefit.auth.service.UserService
 import com.rookiefit.rookiefit.auth.dto.ResponseDTO
 import com.rookiefit.rookiefit.auth.dto.request.SignInRequestDTO
 import com.rookiefit.rookiefit.auth.dto.request.SignUpRequestDTO
