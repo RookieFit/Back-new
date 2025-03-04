@@ -8,7 +8,6 @@ import com.rookiefit.rookiefit.user.dto.UserProfileDTO
 import com.rookiefit.rookiefit.user.dto.response.UserInfoResponseDTO
 import com.rookiefit.rookiefit.user.dto.response.UserProfileResponseDTO
 import com.rookiefit.rookiefit.user.entity.UserInfoEntity
-import com.rookiefit.rookiefit.user.entity.UserProfileEntity
 import com.rookiefit.rookiefit.user.repository.UserInfoRepository
 import com.rookiefit.rookiefit.user.repository.UserProfileRepository
 import org.springframework.http.HttpStatus
@@ -58,7 +57,7 @@ class UserDataService(
 
             userProfileRepository.save(userProfileEntity)
         }
-        return ResponseDTO("CREATE_PROFILE_SUCCESS", "유저 프로필 생성")
+        return ResponseDTO("CREATE_PROFILE_SUCCESS", "유저 프로필 업데이트 성공")
     }
 
     fun createUserInfo(userInfoDTO: UserInfoDTO, currentUserId: String): ResponseDTO {
@@ -67,24 +66,34 @@ class UserDataService(
         val userProfileEntity = userProfileRepository.findByUser_UserId(currentUserId)
             ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "사용자 프로필을 찾을 수 없습니다.")
 
-        val existingUserInfo = userInfoRepository.findByUserProfile_UserProfileIdAndUserInfoInbodyDate(
-            userProfileEntity.userProfileId, userInfoDTO.userInfoInBodyDate
+        val existingUserInfo = userInfoRepository.findByUserInfoInbodyDate(
+            userInfoDTO.userInfoInBodyDate
         )
         if (existingUserInfo != null) {
-            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "이미 해당 날짜의 체성분 정보가 존재합니다.")
+            existingUserInfo.apply{
+                userInfoAge = userInfoDTO.userInfoAge
+                userInfoWeight = userInfoDTO.userInfoWeight
+                userInfoHeight = userInfoDTO.userInfoHeight
+                userInfoFatMass = userInfoDTO.userInfoFatMass
+                userInfoMuscleMass = userInfoDTO.userInfoMuscleMass
+                userInfoBasalMetabolicRate = userInfoDTO.userBasalMetabolicRate
+            }
+            userInfoRepository.save(existingUserInfo)
+            return ResponseDTO("UPDATE_USERINFO_SUCCESS", "유저 체성분 정보 업데이트 성공")
+        }else {
+            val newUserInfo = UserInfoEntity(
+                userProfile = userProfileEntity,
+                userInfoAge = userInfoDTO.userInfoAge,
+                userInfoWeight = userInfoDTO.userInfoWeight,
+                userInfoHeight = userInfoDTO.userInfoHeight,
+                userInfoMuscleMass = userInfoDTO.userInfoMuscleMass,
+                userInfoFatMass = userInfoDTO.userInfoFatMass,
+                userInfoInbodyDate = userInfoDTO.userInfoInBodyDate,
+                userInfoBasalMetabolicRate = userInfoDTO.userBasalMetabolicRate
+            )
+            userInfoRepository.save(newUserInfo)
+            return ResponseDTO("CREATE_USERINFO_SUCCESS", "유저 체성분 생성")
         }
-        val userEntity = UserInfoEntity(
-            userProfile = userProfileEntity,
-            userInfoAge = userInfoDTO.userInfoAge,
-            userInfoWeight = userInfoDTO.userInfoWeight,
-            userInfoHeight = userInfoDTO.userInfoHeight,
-            userInfoMuscleMass = userInfoDTO.userInfoMuscleMass,
-            userInfoFatMass = userInfoDTO.userInfoFatMass,
-            userInfoInbodyDate = userInfoDTO.userInfoInBodyDate,
-            userInfoBasalMetabolicRate = userInfoDTO.userBasalMetabolicRate
-        )
-        userInfoRepository.save(userEntity)
-        return ResponseDTO("CREATE_USERINFO_SUCCESS", "유저 체성분 생성")
     }
 
     fun getUserProfile(currentUserId: String?): UserProfileResponseDTO? {
