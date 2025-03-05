@@ -1,14 +1,17 @@
-package com.rookiefit.rookiefit.auth
+package com.rookiefit.rookiefit.auth.service
 
 import com.rookiefit.rookiefit.auth.dto.ResponseDTO
 import com.rookiefit.rookiefit.auth.dto.request.SignInRequestDTO
 import com.rookiefit.rookiefit.auth.dto.request.SignUpRequestDTO
+import com.rookiefit.rookiefit.auth.entity.UserEntity
+import com.rookiefit.rookiefit.auth.repository.UserRepository
 import com.rookiefit.rookiefit.provider.JwtProvider
+import com.rookiefit.rookiefit.user.entity.UserProfileEntity
+import org.springframework.beans.factory.annotation.Value
 import jakarta.servlet.http.Cookie
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.slf4j.LoggerFactory
-import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
@@ -16,6 +19,7 @@ import org.springframework.web.server.ResponseStatusException
 
 @Service
 class UserService(
+    @Value("\${defaultImage}") private val defaultImage: String,
     private val userRepository: UserRepository,
     private val jwtProvider: JwtProvider
 ) {
@@ -51,6 +55,14 @@ class UserService(
             role = "ROLE_USER",
             type = "app"
         )
+        val currentUserid = signUpRequestDTO.userId
+        val maskPart = "*".repeat(currentUserid.length - 2)
+        val userProfile = UserProfileEntity(
+            userProfileNickname = "rookiefit-${currentUserid.take(2)}${maskPart}",
+            userProfileImageUri = defaultImage,
+            user = userEntity
+        )
+        userEntity.userProfile = userProfile
         userRepository.save(userEntity)
         return ResponseDTO("SIGN_UP_SUCCESS", "회원가입 성공")
     }

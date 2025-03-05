@@ -1,16 +1,14 @@
-package com.rookiefit.rookiefit.auth
+package com.rookiefit.rookiefit.auth.entity
 
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
-import jakarta.persistence.Id
-import jakarta.persistence.Table
+import com.rookiefit.rookiefit.user.entity.UserProfileEntity
+import jakarta.persistence.*
 
 @Entity
 @Table(name = "user_auth")
 class UserEntity (
     @Id
     @Column(name = "user_id")
-    var userId: String = "",
+    val userId: String = "",
 
     @Column(name = "user_password")
     var userPassword: String = "",
@@ -32,4 +30,8 @@ class UserEntity (
 
     @Column(name = "is_licensed")
     var isLicensed: Boolean = false,
+
+    @OneToOne(mappedBy = "user", cascade = [CascadeType.ALL], orphanRemoval = true)
+    var userProfile: UserProfileEntity? = null
 )
+

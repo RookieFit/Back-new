@@ -1,7 +1,7 @@
 package com.rookiefit.rookiefit.filter
 
-import com.rookiefit.rookiefit.auth.UserEntity
-import com.rookiefit.rookiefit.auth.UserRepository
+import com.rookiefit.rookiefit.auth.entity.UserEntity
+import com.rookiefit.rookiefit.auth.repository.UserRepository
 import com.rookiefit.rookiefit.provider.JwtProvider
 import io.jsonwebtoken.ExpiredJwtException
 import io.jsonwebtoken.MalformedJwtException

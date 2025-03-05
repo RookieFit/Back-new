@@ -22,7 +22,9 @@ class WorkoutController(
         @RequestPart("workout") workoutDTO: WorkoutDTO,
         @RequestPart("images", required = false) images: List<MultipartFile>?,
     ) : ResponseEntity<ResponseDTO> {
-        val responseBody = workoutService.createWorkout(workoutDTO, images)
+        val authentication = SecurityContextHolder.getContext().authentication
+        val currentUserId = authentication?.principal as? String
+        val responseBody = workoutService.createWorkout(currentUserId, workoutDTO, images)
         return ResponseEntity.status(HttpStatus.CREATED).body(responseBody)
     }
     @GetMapping("/getworkout")
