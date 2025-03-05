@@ -17,12 +17,12 @@ class FirebaseService(
     private companion object {
         private val LOG = LoggerFactory.getLogger(FirebaseService::class.java)
     }
-    fun uploadImageFile(file: MultipartFile): String {
+    fun uploadImageFile(file: MultipartFile?): String {
         val buckName = "rookiefit-edf53"
-        val originalFileName = file.originalFilename
+        val originalFileName = file?.originalFilename
         val fileName = "$originalFileName-${System.currentTimeMillis()}.jpg"
 
-        val inputStream = file.inputStream
+        val inputStream = file?.inputStream
         val image = ImageIO.read(inputStream)
         if (image == null) {
             LOG.error("이미지를 읽을 수 없습니다")

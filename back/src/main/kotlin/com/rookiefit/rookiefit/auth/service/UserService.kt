@@ -6,6 +6,8 @@ import com.rookiefit.rookiefit.auth.dto.request.SignUpRequestDTO
 import com.rookiefit.rookiefit.auth.entity.UserEntity
 import com.rookiefit.rookiefit.auth.repository.UserRepository
 import com.rookiefit.rookiefit.provider.JwtProvider
+import com.rookiefit.rookiefit.user.entity.UserProfileEntity
+import org.springframework.beans.factory.annotation.Value
 import jakarta.servlet.http.Cookie
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
@@ -17,6 +19,7 @@ import org.springframework.web.server.ResponseStatusException
 
 @Service
 class UserService(
+    @Value("\${defaultImage}") private val defaultImage: String,
     private val userRepository: UserRepository,
     private val jwtProvider: JwtProvider
 ) {
@@ -52,6 +55,14 @@ class UserService(
             role = "ROLE_USER",
             type = "app"
         )
+        val currentUserid = signUpRequestDTO.userId
+        val maskPart = "*".repeat(currentUserid.length - 2)
+        val userProfile = UserProfileEntity(
+            userProfileNickname = "rookiefit-${currentUserid.take(2)}${maskPart}",
+            userProfileImageUri = defaultImage,
+            user = userEntity
+        )
+        userEntity.userProfile = userProfile
         userRepository.save(userEntity)
         return ResponseDTO("SIGN_UP_SUCCESS", "회원가입 성공")
     }

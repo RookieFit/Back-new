@@ -2,6 +2,7 @@ package com.rookiefit.rookiefit.workout.service
 
 import com.rookiefit.rookiefit.auth.dto.ResponseDTO
 import com.rookiefit.rookiefit.common.FirebaseService
+import com.rookiefit.rookiefit.user.repository.UserProfileRepository
 import com.rookiefit.rookiefit.workout.dto.WorkoutDTO
 import com.rookiefit.rookiefit.workout.dto.response.WorkoutDetailResponseDTO
 import com.rookiefit.rookiefit.workout.dto.response.WorkoutResponseDTO
@@ -17,18 +18,21 @@ import org.springframework.web.multipart.MultipartFile
 
 @Service
 class WorkoutService(
+    private val userProfileRepository: UserProfileRepository,
     private val workoutRepository: WorkoutRepository,
     private val workoutImageRepository: WorkoutImageRepository,
     private val workoutDetailRepository: WorkoutDetailRepository,
     private val firebaseService: FirebaseService
 ) {
     @Transactional
-    fun createWorkout(workoutDTO: WorkoutDTO, images: List<MultipartFile>?): ResponseDTO {
+    fun createWorkout(currentUserId: String?, workoutDTO: WorkoutDTO, images: List<MultipartFile>?): ResponseDTO {
+        val userProfileEntity = userProfileRepository.findByUser_UserId(currentUserId)
         val workoutEntity = WorkoutEntity(
             workoutTitle = workoutDTO.workoutTitle,
             workoutComment = workoutDTO.workoutComment,
             workoutCreatedDate = workoutDTO.workoutCreatedDate,
-            dailyCaloriesBurned = workoutDTO.dailyCaloriesBurned
+            dailyCaloriesBurned = workoutDTO.dailyCaloriesBurned,
+            userProfile = userProfileEntity
         )
         val workoutDetailEntities = workoutDTO.workoutDetails.map {
             detail -> WorkoutDetailEntity(
