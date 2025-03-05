@@ -16,11 +16,14 @@ class UserDietDetailEntity(
     var fatce: Double,   // 지방
     var enerc: Double,   // 칼로리
 
+    @Column(name = "diet_date")
+    var dietDate: String, // var로 변경하여 수정 가능하게
+
     @ManyToOne
     @JoinColumn(name = "user_diet_id")
     var userDiet: UserDietEntity
 ) {
-    // 음식 이름에 따른 칼로리 자동 채워 넣기
+
     fun setFoodInfo(foodInfo: FoodInfoEntity) {
         this.foodName = foodInfo.foodName
         this.foodFirstCategory = foodInfo.foodFirstCategory
@@ -28,5 +31,6 @@ class UserDietDetailEntity(
         this.prot = foodInfo.prot
         this.fatce = foodInfo.fatce
         this.enerc = foodInfo.enerc
+        this.dietDate = userDiet.dietDate
     }
 }

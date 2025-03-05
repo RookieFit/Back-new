@@ -44,7 +44,8 @@ class UserDietService(
                 chocdf = foodInfo.chocdf,
                 prot = foodInfo.prot,
                 fatce = foodInfo.fatce,
-                enerc = foodInfo.enerc
+                enerc = foodInfo.enerc,
+                dietDate = userDiet.dietDate
             )
         }
 
