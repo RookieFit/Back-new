@@ -76,14 +76,7 @@ class UserDietService(
 
         // 삭제 후 totalCalories를 갱신
         userDiet.updateTotalCalories()
-
-        // 삭제 후 해당 음식이 존재하지 않는지 확인
-        val deletedFood = userDietDetailRepository.findById(userDietDetailId).orElse(null)
-        return if (deletedFood == null) {
-            ResponseEntity.ok("음식이 성공적으로 삭제되었습니다.")
-        } else {
-            ResponseEntity.status(500).body("음식 삭제에 실패했습니다.")
-        }
+        return ResponseEntity.ok("음식이 성공적으로 삭제되었습니다.")
     }
 
     @Transactional
