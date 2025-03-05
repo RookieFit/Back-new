@@ -11,7 +11,7 @@ class FoodInfoEntity(
     val id: Long = 0,
 
     val foodName: String,
-    val foodFirstCategory: String,  // 카테고리 추가
+    val foodFirstCategory: String,
 
     val enerc: Double,
     val prot: Double,

@@ -1,16 +1,18 @@
 package com.rookiefit.rookiefit.diet.service
 
-import com.rookiefit.rookiefit.diet.dto.FoodInfoDto
-import com.rookiefit.rookiefit.diet.dto.FoodInfoRequestDto
-import com.rookiefit.rookiefit.diet.entity.FoodInfoEntity
-import com.rookiefit.rookiefit.diet.repository.FoodInfoRepository
+import com.rookiefit.rookiefit.diet.dto.*
+import com.rookiefit.rookiefit.diet.entity.*
+import com.rookiefit.rookiefit.diet.repository.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 @Service
 class DietService(
-    @Autowired private val foodInfoRepository: FoodInfoRepository
+    @Autowired private val foodInfoRepository: FoodInfoRepository,
+    @Autowired private val userDietRepository: UserDietRepository,
+    @Autowired private val userDietDetailRepository: UserDietDetailRepository
 ) {
+
     // 음식 검색
     fun searchFood(keyword: String): List<FoodInfoDto> {
         val trimmedKeyword = keyword.trim()
@@ -18,7 +20,7 @@ class DietService(
         return foods.map { FoodInfoDto.fromEntity(it) }
     }
 
-    // 음식 추가
+    // food_info에 없는 음식 추가
     fun addFood(foodInfoRequestDto: FoodInfoRequestDto): FoodInfoDto {
         // 1. 같은 foodName이 있는지 확인
         val existingFood = foodInfoRepository.findByFoodName(foodInfoRequestDto.foodName)
@@ -39,5 +41,4 @@ class DietService(
         val savedFood = foodInfoRepository.save(foodEntity)
         return FoodInfoDto.fromEntity(savedFood)
     }
-
 }
