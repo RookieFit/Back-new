@@ -33,4 +33,14 @@ class UserDietController(private val userDietService: UserDietService) {
         userDietService.deleteFoodFromDiet(detailId)
         return ResponseEntity.noContent().build()
     }
+
+    // 특정 날짜의 식단 삭제
+    @DeleteMapping("/delete")
+    fun deleteDietByDate(
+        @RequestParam userId: String,
+        @RequestParam dietDate: String
+    ): ResponseEntity<String> {
+        return userDietService.deleteDietByDate(userId, dietDate)
+    }
+
 }

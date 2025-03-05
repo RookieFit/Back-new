@@ -85,4 +85,17 @@ class UserDietService(
             ResponseEntity.status(500).body("음식 삭제에 실패했습니다.")
         }
     }
+
+    @Transactional
+    fun deleteDietByDate(userId: String, dietDate: String): ResponseEntity<String> {
+        // 해당 날짜의 식단을 찾음
+        val userDiet = userDietRepository.findByUserIdAndDietDate(userId, dietDate)
+            ?: throw IllegalArgumentException("해당 날짜의 식단이 존재하지 않습니다.")
+
+        // 해당 날짜의 식단에 포함된 모든 음식들 삭제
+        userDietDetailRepository.deleteAllByUserDiet(userDiet)  // 식단에 포함된 음식들 삭제
+        userDietRepository.delete(userDiet)  // 식단 자체 삭제
+
+        return ResponseEntity.ok("해당 날짜의 식단이 성공적으로 삭제되었습니다.")
+    }
 }

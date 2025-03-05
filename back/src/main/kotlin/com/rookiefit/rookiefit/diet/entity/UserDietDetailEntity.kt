@@ -17,7 +17,7 @@ class UserDietDetailEntity(
     var enerc: Double,   // 칼로리
 
     @Column(name = "diet_date")
-    var dietDate: String, // var로 변경하여 수정 가능하게
+    var dietDate: String,
 
     @ManyToOne
     @JoinColumn(name = "user_diet_id")
