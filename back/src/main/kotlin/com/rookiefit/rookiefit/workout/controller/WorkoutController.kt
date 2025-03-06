@@ -41,4 +41,14 @@ class WorkoutController(
         val responseBody = workoutService.getWorkoutDetail(currentUserId, currentDate)
         return responseBody
     }
+    @PutMapping("/update")
+    fun updateWorkout(
+        @RequestPart("workout") workoutDTO: WorkoutDTO,
+        @RequestPart("images", required = false) images: List<MultipartFile>?,
+    ): ResponseEntity<ResponseDTO> {
+        val authentication = SecurityContextHolder.getContext().authentication
+        val currentUserId = authentication?.principal as? String
+        val responseBody = workoutService.updateWorkout(currentUserId, workoutDTO, images)
+        return ResponseEntity.status(HttpStatus.OK).body(responseBody)
+    }
 }
