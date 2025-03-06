@@ -13,7 +13,7 @@ import java.sql.SQLException
 class GlobalExceptionHandler {
     @ExceptionHandler(IllegalArgumentException::class)
     fun handleIllegalArgumentException(e: IllegalArgumentException): ResponseEntity<ResponseDTO> {
-        val errorResponse = ResponseDTO("INVALID_INPUT", "잘못된 입력값입니다.")
+        val errorResponse = ResponseDTO("INVALID_INPUT", e.message ?: "잘못된 입력값입니다.")
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse)
     }
     @ExceptionHandler(SQLException::class)
