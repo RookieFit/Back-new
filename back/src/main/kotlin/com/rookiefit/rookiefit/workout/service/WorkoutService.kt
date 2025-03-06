@@ -29,6 +29,7 @@ class WorkoutService(
     @Transactional
     fun createWorkout(currentUserId: String?, workoutDTO: WorkoutDTO, images: List<MultipartFile>?): ResponseDTO {
         val userProfileEntity = userProfileRepository.findByUser_UserId(currentUserId)
+            ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "존재하지 않는 유저")
         val workoutEntity = WorkoutEntity(
             workoutTitle = workoutDTO.workoutTitle,
             workoutComment = workoutDTO.workoutComment,
@@ -97,7 +98,7 @@ class WorkoutService(
     fun updateWorkout(
         currentUserId: String?,
         workoutDTO: WorkoutDTO,
-        images: List<MultipartFile>? // 새로운 이미지 URI 리스트
+        images: List<MultipartFile>? // 새로운 이미지 리스트
     ): ResponseDTO {
         val userProfileEntity = userProfileRepository.findByUser_UserId(currentUserId)
             ?: return ResponseDTO("USER_NOT_FOUND", "유저를 찾을 수 없습니다.")
@@ -105,12 +106,14 @@ class WorkoutService(
         val existingWorkoutEntity = workoutRepository.findByUserProfile_UserProfileIdAndWorkoutCreatedDate(
             userProfileEntity.userProfileId,
             workoutDTO.workoutCreatedDate
-        )
+        ) ?: return ResponseDTO("WORKOUT_NOT_FOUND", "해당 날짜의 운동 기록이 없습니다.")
 
+        // 운동 정보 업데이트
         existingWorkoutEntity.workoutTitle = workoutDTO.workoutTitle
         existingWorkoutEntity.workoutComment = workoutDTO.workoutComment
         existingWorkoutEntity.dailyCaloriesBurned = workoutDTO.dailyCaloriesBurned
 
+        // 기존 운동 상세 정보 삭제 후 새로운 데이터 추가
         workoutDetailRepository.deleteByWorkout_WorkoutId(existingWorkoutEntity.workoutId)
 
         val newWorkoutDetails = workoutDTO.workoutDetails.map { newDetail ->
@@ -131,24 +134,26 @@ class WorkoutService(
             throw e
         }
 
-        val existingImages = workoutImageRepository.findByWorkout_WorkoutId(existingWorkoutEntity.workoutId)
-        existingImages.forEach { imageEntity ->
-            firebaseService.deleteImageFile(imageEntity.workoutImageUri)
-        }
-        workoutImageRepository.deleteByWorkout_WorkoutId(existingWorkoutEntity.workoutId)
-
-        val imageUris: List<String>? = images?.let { firebaseService.uploadImageFiles(it) }
-        imageUris?.forEach { imageUrl ->
-            val imageEntity = WorkoutImageUriEntity(
-                workoutImageUri = imageUrl,
-                workoutImageUriCreatedDate = workoutDTO.workoutCreatedDate,
-                workout = existingWorkoutEntity
-            )
+        if (!images.isNullOrEmpty()) {
+            val existingImages = workoutImageRepository.findByWorkout_WorkoutId(existingWorkoutEntity.workoutId)
+            existingImages.forEach { imageEntity ->
+                firebaseService.deleteImageFile(imageEntity.workoutImageUri)
+            }
             workoutImageRepository.deleteByWorkout_WorkoutId(existingWorkoutEntity.workoutId)
-            workoutImageRepository.save(imageEntity)
+            val imageUris = firebaseService.uploadImageFiles(images)
+            val newImageEntities = imageUris.map { imageUrl ->
+                WorkoutImageUriEntity(
+                    workoutImageUri = imageUrl,
+                    workoutImageUriCreatedDate = workoutDTO.workoutCreatedDate,
+                    workout = existingWorkoutEntity
+                )
+            }
+            workoutImageRepository.saveAll(newImageEntities) // 새로운 이미지 저장
         }
-        // 운동 기록 업데이트
+
+        // 운동 기록 저장
         workoutRepository.save(existingWorkoutEntity)
         return ResponseDTO("UPDATE_SUCCESS", "운동 기록이 성공적으로 업데이트되었습니다.")
     }
+
 }
