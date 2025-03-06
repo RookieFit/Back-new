@@ -122,6 +122,12 @@ class WorkoutService(
             throw e
         }
 
+        val existingImages = workoutImageRepository.findByWorkout_WorkoutId(existingWorkoutEntity.workoutId)
+        existingImages.forEach { imageEntity ->
+            firebaseService.deleteImageFile(imageEntity.workoutImageUri)
+        }
+        workoutImageRepository.deleteByWorkout_WorkoutId(existingWorkoutEntity.workoutId)
+
         val imageUris: List<String>? = images?.let { firebaseService.uploadImageFiles(it) }
         imageUris?.forEach { imageUrl ->
             val imageEntity = WorkoutImageUriEntity(
