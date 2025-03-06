@@ -12,9 +12,11 @@ import com.rookiefit.rookiefit.workout.entity.WorkoutImageUriEntity
 import com.rookiefit.rookiefit.workout.repository.WorkoutDetailRepository
 import com.rookiefit.rookiefit.workout.repository.WorkoutImageRepository
 import com.rookiefit.rookiefit.workout.repository.WorkoutRepository
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.multipart.MultipartFile
+import org.springframework.web.server.ResponseStatusException
 
 @Service
 class WorkoutService(
@@ -58,9 +60,12 @@ class WorkoutService(
         return ResponseDTO("CREATE_WORKOUT_SUCCESS", "저장되었습니다.")
     }
 
-    //todo: 해당유저의 정보를 넘겨줄것
     fun getWorkout(currentUserId: String?): List<WorkoutResponseDTO> {
-        val workoutEntities = workoutRepository.findAll()
+        val userProfileEntity = userProfileRepository.findByUser_UserId(currentUserId)
+            ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "존재하지않는 유저")
+        val workoutEntities = workoutRepository.findByUserProfile_UserProfileId(
+            userProfileEntity.userProfileId
+        )
         return workoutEntities.map {
             entity -> WorkoutResponseDTO(
                 workoutTitle = entity.workoutTitle,
@@ -71,9 +76,13 @@ class WorkoutService(
         }
     }
 
-    //todo: 해당유저의 정보를 넘겨줄것
     fun getWorkoutDetail(currentUserId: String?, currentDate: String): List<WorkoutDetailResponseDTO> {
-        val workoutDetailEntities = workoutDetailRepository.findByWorkoutCreatedDate(currentDate)
+        val userProfileEntity = userProfileRepository.findByUser_UserId(currentUserId)
+            ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "존재하지않는 유저")
+        val userWorkoutEntity = workoutRepository.findByUserProfile_UserProfileIdAndWorkoutCreatedDate(
+            userProfileEntity.userProfileId, currentDate
+        )
+        val workoutDetailEntities = workoutDetailRepository.findByWorkout_WorkoutIdAndWorkoutCreatedDate(userWorkoutEntity.workoutId,currentDate)
         return workoutDetailEntities.map {
             entity -> WorkoutDetailResponseDTO(
                 workoutName = entity.workoutName,

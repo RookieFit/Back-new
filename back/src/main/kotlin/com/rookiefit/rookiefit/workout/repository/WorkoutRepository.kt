@@ -8,4 +8,5 @@ interface WorkoutRepository: JpaRepository<WorkoutEntity, Long> {
         userProfileId: Long,
         workoutCreatedDate: String
     ) : WorkoutEntity
+    fun findByUserProfile_UserProfileId(userProfileId: Long): List<WorkoutEntity>
 }
