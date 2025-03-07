@@ -6,6 +6,6 @@ COPY ./back/build/libs/*.jar /app/myapp.jar
 
 RUN chmod +x /app/myapp.jar
 
-ENTRYPOINT ["java", "-jar", "/app/app.jar"]
+ENTRYPOINT ["java","-jar","/app/myapp.jar"]
 
 EXPOSE 8080
