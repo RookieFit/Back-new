@@ -71,6 +71,7 @@ jobs:
           password: ${{ secrets.SERVER_PASSWORD }}
           script: |
             echo "Starting deploy process"
+            echo "Using IMAGE_TAG: $IMAGE_TAG"  # IMAGE_TAG 값 출력
             docker pull pipakmj/myapp:$IMAGE_TAG
             docker stop myapp_container || echo "myapp_container does not exist"
             docker rm myapp_container || echo "myapp_container does not exist"
