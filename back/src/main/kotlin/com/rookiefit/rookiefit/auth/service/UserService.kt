@@ -81,7 +81,7 @@ class UserService(
         //todo: https연결후 secure값 true로 변경할것
         val refreshTokenCookie = Cookie("refreshToken", refreshToken).apply {
             isHttpOnly = true
-            secure = false  // HTTPS 환경에서만 사용하려면 true로 설정
+            secure = true  // HTTPS 환경에서만 사용하려면 true로 설정
             path = "/"  // 모든 경로에서 쿠키 사용
             maxAge = 7 * 24 * 60 * 60  // 일주일 유효
         }
