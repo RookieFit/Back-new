@@ -13,7 +13,7 @@ data class UserDietDto(
         fun fromEntity(entity: UserDietEntity): UserDietDto {
             return UserDietDto(
                 id = entity.id,
-                userId = entity.userId,
+                userId = entity.user.userId,
                 dietDate = entity.dietDate,
                 totalCalories = entity.totalCalories,
                 dietDetails = entity.details.map { UserDietDetailDto.fromEntity(it) }
