@@ -1,4 +1,4 @@
-FROM eclipse-temurin:21-jdk-alpine as build
+FROM gradle:7.6-jdk21-alpine AS build
 
 WORKDIR /app
 
