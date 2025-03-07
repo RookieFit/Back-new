@@ -1,8 +1,8 @@
-FROM gradle:7.6-jdk21-alpine AS build
+FROM eclipse-temurin:21-jdk-alpine AS runtime
 
 WORKDIR /app
 
-COPY ./build/libs/*.jar /app/myapp.jar
+COPY ./back/build/libs/*.jar /app/myapp.jar
 
 ENTRYPOINT ["java", "-jar", "/app/app.jar"]
 
