@@ -2,7 +2,7 @@ FROM eclipse-temurin:21-jdk-alpine as build
 
 WORKDIR /app
 
-COPY --from=build /app/build/libs/*.jar /app/app.jar
+COPY ./back/build/libs/*.jar /app/myapp.jar
 
 ENTRYPOINT ["java", "-jar", "/app/app.jar"]
 
