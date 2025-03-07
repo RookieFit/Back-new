@@ -4,6 +4,8 @@ WORKDIR /app
 
 COPY ./back/build/libs/*.jar /app/myapp.jar
 
+RUN chmod +x /app/myapp.jar
+
 ENTRYPOINT ["java", "-jar", "/app/app.jar"]
 
 EXPOSE 8080
