@@ -50,4 +50,27 @@ class FirebaseService(
     fun uploadImageFiles(imageList: List<MultipartFile>): List<String> {
         return imageList.map { uploadImageFile(it) }
     }
+    fun deleteImageFile(imageUri: String) {
+        val buckName = "rookiefit-edf53"
+        try {
+            val fileName = imageUri.substringAfter("/o/").substringBefore("?alt=media")
+            storageClient.bucket(buckName).get(fileName)?.delete()
+            LOG.info("파일 삭제 성공: $fileName")
+        }catch (e: Exception) {
+            LOG.info("파일 삭제 중 오류 발생: ${e.message}", e)
+            throw Exception("파일 삭제 실패")
+        }
+    }
+    fun deleteImageFiles(imageList: List<String>): List<Boolean> {
+        return imageList.map { imageUri ->
+            runCatching {
+                deleteImageFile(imageUri)
+                true  // 성공하면 true 반환
+            }.getOrElse { e ->
+                LOG.error("파일 삭제 실패: $imageUri, 오류: ${e.message}", e)
+                false // 실패하면 false 반환
+            }
+        }
+    }
+
 }

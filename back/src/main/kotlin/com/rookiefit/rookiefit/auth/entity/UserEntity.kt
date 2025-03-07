@@ -1,5 +1,6 @@
 package com.rookiefit.rookiefit.auth.entity
 
+import com.rookiefit.rookiefit.diet.entity.UserDietEntity
 import com.rookiefit.rookiefit.user.entity.UserProfileEntity
 import jakarta.persistence.*
 
@@ -32,6 +33,9 @@ class UserEntity (
     var isLicensed: Boolean = false,
 
     @OneToOne(mappedBy = "user", cascade = [CascadeType.ALL], orphanRemoval = true)
-    var userProfile: UserProfileEntity? = null
+    var userProfile: UserProfileEntity? = null,
+
+    @OneToMany(mappedBy = "user", cascade = [CascadeType.ALL], orphanRemoval = true)
+    var userDiets: MutableList<UserDietEntity> = mutableListOf()
 )
 

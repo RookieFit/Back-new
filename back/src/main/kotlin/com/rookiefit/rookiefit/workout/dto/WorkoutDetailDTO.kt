@@ -5,5 +5,4 @@ data class WorkoutDetailDTO(
     val reps: String,
     val sets: String,
     val restTime: String,
-    val workoutCreatedDate: String
 )
