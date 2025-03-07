@@ -1,5 +1,6 @@
 package com.rookiefit.rookiefit.diet.entity
 
+import com.rookiefit.rookiefit.auth.entity.UserEntity
 import jakarta.persistence.*
 
 @Entity
@@ -9,7 +10,10 @@ class UserDietEntity(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0,
 
-    val userId: String,
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    var user: UserEntity,
+
     val dietDate: String,
 
     var totalCalories: Double = 0.0,
