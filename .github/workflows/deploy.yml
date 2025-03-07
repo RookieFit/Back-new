@@ -74,6 +74,7 @@ jobs:
             VERSION_TAG=$(git describe --tags --always)
             DATE_TAG=$(date +'%Y-%m-%d')
             IMAGE_TAG="${VERSION_TAG}-${DATE_TAG}"
+            echo "Using IMAGE_TAG: $IMAGE_TAG"
             docker pull pipakmj/myapp:$IMAGE_TAG
             docker stop myapp_container || echo "myapp_container does not exist"
             docker rm myapp_container || echo "myapp_container does not exist"
