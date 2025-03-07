@@ -6,7 +6,7 @@ WORKDIR /app
 
 # 3. Gradle 또는 Maven 의존성 복사 및 빌드
 COPY ./build.gradle ./settings.gradle ./gradle-wrapper.jar ./gradlew /app/
-COPY ./.gradle /app/gradle
+COPY .gradle /app/gradle
 RUN chmod +x gradlew
 RUN ./gradlew build --no-daemon
 
