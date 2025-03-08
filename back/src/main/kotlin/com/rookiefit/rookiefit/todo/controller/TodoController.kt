@@ -80,7 +80,7 @@ class TodoController(
         }
         return ResponseEntity.ok(response)
     }
-
+    
     // 완료된 todo의 개수를 세는 API
     @GetMapping("/completed/count")
     fun countCompletedTodos(@RequestHeader("Authorization") authorization: String): ResponseEntity<Long> {
@@ -88,7 +88,7 @@ class TodoController(
         val count = todoService.countCompletedTodos(userId)
         return ResponseEntity.ok(count)
     }
-    
+
     // 모든 todo를 가져오는 API
     @GetMapping("/select-all")
     fun selectAllTodos(@RequestHeader("Authorization") authorization: String): ResponseEntity<List<TodoResponseDTO>> {
