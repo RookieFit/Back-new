@@ -12,12 +12,13 @@ class TodoService(private val todoRepository: TodoRepository) {
         return todoRepository.save(todo)
     }
 
-    fun deleteTodoById(id: Long) {
-        todoRepository.deleteById(id)
+    fun deleteTodoById(id: Long, userId: String) {
+        val todo = todoRepository.findByIdAndUser_UserId(id, userId)
+        todo?.let { todoRepository.delete(it) }
     }
 
-    fun markTodoAsCompleted(id: Long): TodoEntity? {
-        val todo = todoRepository.findById(id).orElse(null)
+    fun markTodoAsCompleted(id: Long, userId: String): TodoEntity? {
+        val todo = todoRepository.findByIdAndUser_UserId(id, userId)
         todo?.let {
             it.completed = true
             return todoRepository.save(it)
@@ -25,15 +26,15 @@ class TodoService(private val todoRepository: TodoRepository) {
         return null
     }
 
-    fun getTodosByDate(date: LocalDate): List<TodoEntity> {
-        return todoRepository.findByDate(date)
+    fun getTodosByDate(date: LocalDate, userId: String): List<TodoEntity> {
+        return todoRepository.findByDateAndUser_UserId(date, userId)
     }
 
-    fun countCompletedTodos(): Long {
-        return todoRepository.countCompletedTodos()
+    fun countCompletedTodos(userId: String): Long {
+        return todoRepository.countByCompletedAndUser_UserId(true, userId)
     }
 
-    fun selectAllTodos(): List<TodoEntity> {
-        return todoRepository.findAll()
+    fun selectAllTodos(userId: String): List<TodoEntity> {
+        return todoRepository.findAllByUser_UserId(userId)
     }
 }

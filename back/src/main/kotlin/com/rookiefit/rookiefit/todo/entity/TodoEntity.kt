@@ -1,5 +1,6 @@
 package com.rookiefit.rookiefit.todo.entity
 
+import com.rookiefit.rookiefit.auth.entity.UserEntity
 import jakarta.persistence.*
 import java.time.LocalDate
 
@@ -17,5 +18,9 @@ class TodoEntity(
     var completed: Boolean = false,
 
     @Column(name = "date")
-    var date: LocalDate = LocalDate.now()
+    var date: LocalDate = LocalDate.now(),
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    var user: UserEntity
 )

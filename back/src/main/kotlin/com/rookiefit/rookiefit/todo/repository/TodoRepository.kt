@@ -2,14 +2,11 @@ package com.rookiefit.rookiefit.todo.repository
 
 import com.rookiefit.rookiefit.todo.entity.TodoEntity
 import org.springframework.data.jpa.repository.JpaRepository
-import org.springframework.data.jpa.repository.Query
-import org.springframework.stereotype.Repository
 import java.time.LocalDate
 
-@Repository
 interface TodoRepository : JpaRepository<TodoEntity, Long> {
-    fun findByDate(date: LocalDate): List<TodoEntity>
-
-    @Query("SELECT COUNT(t) FROM TodoEntity t WHERE t.completed = true")
-    fun countCompletedTodos(): Long
+    fun findByIdAndUser_UserId(id: Long, userId: String): TodoEntity?
+    fun findByDateAndUser_UserId(date: LocalDate, userId: String): List<TodoEntity>
+    fun countByCompletedAndUser_UserId(completed: Boolean, userId: String): Long
+    fun findAllByUser_UserId(userId: String): List<TodoEntity>
 }

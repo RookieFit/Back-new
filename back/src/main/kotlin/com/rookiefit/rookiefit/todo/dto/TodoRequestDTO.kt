@@ -5,5 +5,6 @@ import java.time.LocalDate
 data class TodoRequestDTO(
     val description: String,
     val completed: Boolean,
-    val date: LocalDate
+    val date: LocalDate,
+    val userId: Long
 )
