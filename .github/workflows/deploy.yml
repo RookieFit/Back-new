@@ -2,10 +2,7 @@ name: deploy.yml
 on:
   push:
     branches:
-      - dev
-  pull_request:
-    branches:
-      - dev
+      - deploy
 
 jobs:
   build:
