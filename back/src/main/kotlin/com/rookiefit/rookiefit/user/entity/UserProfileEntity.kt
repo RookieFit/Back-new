@@ -23,5 +23,6 @@ class UserProfileEntity (
     var userInfo : MutableList<UserInfoEntity> = mutableListOf(),
     @OneToMany(mappedBy = "userProfile", cascade = [(CascadeType.REMOVE)])
     var WorkoutEntity : MutableList<WorkoutEntity> = mutableListOf(),
-
+    @OneToMany(mappedBy = "userProfile", cascade = [(CascadeType.REMOVE)])
+    var CommunityEntity : MutableList<WorkoutEntity> = mutableListOf(),
     )

@@ -47,8 +47,8 @@ class FirebaseService(
 
         return downloadUri
     }
-    fun uploadImageFiles(imageList: List<MultipartFile>): List<String> {
-        return imageList.map { uploadImageFile(it) }
+    fun uploadImageFiles(imageList: List<MultipartFile>?): List<String>? {
+        return imageList?.map { uploadImageFile(it) }
     }
     fun deleteImageFile(imageUri: String) {
         val buckName = "rookiefit-edf53"
