@@ -2,7 +2,8 @@ package com.rookiefit.rookiefit.community.controller
 
 import com.rookiefit.rookiefit.auth.dto.ResponseDTO
 import com.rookiefit.rookiefit.common.FirebaseService
-import com.rookiefit.rookiefit.community.dto.CommunityRequestDTO
+import com.rookiefit.rookiefit.community.dto.request.CommunityRequestDTO
+import com.rookiefit.rookiefit.community.dto.response.CommunityDetailResponseDTO
 import com.rookiefit.rookiefit.community.service.CommunityService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -46,5 +47,9 @@ class CommunityController(
         @RequestParam(defaultValue = "10") size: Int
     ): Map<String, Any> {
         return communityService.getCommunityList(communityType, page, size)
+    }
+    @GetMapping("/detail")
+    fun getCommunityDetail(@RequestParam communityId: Long): CommunityDetailResponseDTO {
+        return communityService.getCommunityDetail(communityId)
     }
 }

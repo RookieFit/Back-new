@@ -1,4 +1,4 @@
-package com.rookiefit.rookiefit.community.dto
+package com.rookiefit.rookiefit.community.dto.request
 
 data class CommunityRequestDTO(
     val communityTitle: String,

@@ -1,4 +1,4 @@
-package com.rookiefit.rookiefit.community.dto
+package com.rookiefit.rookiefit.community.dto.response
 
 data class CommunityResponseDTO(
     val communityId: Long,

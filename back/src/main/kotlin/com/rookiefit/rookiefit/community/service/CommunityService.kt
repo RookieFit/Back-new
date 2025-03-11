@@ -2,8 +2,9 @@ package com.rookiefit.rookiefit.community.service
 
 import com.rookiefit.rookiefit.auth.dto.ResponseDTO
 import com.rookiefit.rookiefit.common.DateFormat
-import com.rookiefit.rookiefit.community.dto.CommunityRequestDTO
-import com.rookiefit.rookiefit.community.dto.CommunityResponseDTO
+import com.rookiefit.rookiefit.community.dto.request.CommunityRequestDTO
+import com.rookiefit.rookiefit.community.dto.response.CommunityDetailResponseDTO
+import com.rookiefit.rookiefit.community.dto.response.CommunityResponseDTO
 import com.rookiefit.rookiefit.community.entity.CommunityEntity
 import com.rookiefit.rookiefit.community.repository.CommunityRepository
 import com.rookiefit.rookiefit.user.repository.UserProfileRepository
@@ -53,6 +54,16 @@ class CommunityService (
         return mapOf(
             "content" to communityResponseDTOList,
             "totalPages" to communityPage.totalPages
+        )
+    }
+    fun getCommunityDetail(communityId: Long): CommunityDetailResponseDTO {
+        val communityEntity = communityRepository.findByCommunityId(communityId)
+        return CommunityDetailResponseDTO(
+            communityTitle = communityEntity.communityTitle,
+            communityContent = communityEntity.communityContent,
+            communityAuthor = communityEntity.communityAuthor,
+            communityCreatedAt = communityEntity.communityCreatedAt,
+            communityType = communityEntity.communityType
         )
     }
 }
