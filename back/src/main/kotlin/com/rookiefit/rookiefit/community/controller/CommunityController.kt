@@ -7,9 +7,11 @@ import com.rookiefit.rookiefit.community.service.CommunityService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RequestPart
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
@@ -36,5 +38,13 @@ class CommunityController(
         val currentUserId = authentication?.principal as? String
         val responseBody = communityService.createCommunity(currentUserId, communityRequestDTO)
         return ResponseEntity.status(HttpStatus.CREATED).body(responseBody)
+    }
+    @GetMapping("/list")
+    fun getCommunityList(
+        @RequestParam(defaultValue = "전체") communityType: String,
+        @RequestParam(defaultValue = "0") page: Int,
+        @RequestParam(defaultValue = "10") size: Int
+    ): Map<String, Any> {
+        return communityService.getCommunityList(communityType, page, size)
     }
 }
