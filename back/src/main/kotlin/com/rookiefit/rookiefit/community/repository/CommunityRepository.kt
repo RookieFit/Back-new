@@ -14,4 +14,29 @@ interface CommunityRepository: JpaRepository<CommunityEntity, Long> {
         communityType: String,
         pageable: Pageable
     ): Page<CommunityEntity>
+    fun findByCommunityTitleContaining(query: String, pageable: Pageable): Page<CommunityEntity>
+    fun findByCommunityTitleContainingOrCommunityContentContaining(query1: String, query2: String, pageable: Pageable): Page<CommunityEntity>
+    fun findByCommunityAuthorContaining(query: String, pageable: Pageable): Page<CommunityEntity>
+    fun findByCommunityTypeAndCommunityTitleContaining(communityType: String, query: String, pageable: Pageable): Page<CommunityEntity>
+    fun findByCommunityTypeAndCommunityTitleContainingOrCommunityContentContaining(
+        communityType: String,
+        query1: String,
+        query2: String,
+        pageable: Pageable
+    ): Page<CommunityEntity>
+    fun findByCommunityTypeAndCommunityAuthorContaining(communityType: String, query: String, pageable: Pageable): Page<CommunityEntity>
+    fun findByUserProfile_UserProfileIdAndCommunityTitleContaining(userProfileId: Long, query: String, pageable: Pageable): Page<CommunityEntity>
+    fun findByUserProfile_UserProfileIdAndCommunityAuthorContaining(userProfileId: Long, query: String, pageable: Pageable): Page<CommunityEntity>
+    fun findByUserProfile_UserProfileIdAndCommunityTypeAndCommunityTitleContaining(
+        userProfileId: Long,
+        communityType: String,
+        query: String,
+        pageable: Pageable
+    ): Page<CommunityEntity>
+    fun findByUserProfile_UserProfileIdAndCommunityTypeAndCommunityAuthorContaining(
+        userProfileId: Long,
+        communityType: String,
+        query: String,
+        pageable: Pageable
+    ): Page<CommunityEntity>
 }

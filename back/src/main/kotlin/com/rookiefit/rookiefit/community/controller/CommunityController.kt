@@ -44,19 +44,23 @@ class CommunityController(
     fun getCommunityList(
         @RequestParam(defaultValue = "전체") communityType: String,
         @RequestParam(defaultValue = "0") page: Int,
-        @RequestParam(defaultValue = "10") size: Int
+        @RequestParam(defaultValue = "10") size: Int,
+        @RequestParam(required = false) searchType: String?,
+        @RequestParam(required = false) searchQuery: String?
     ): Map<String, Any> {
-        return communityService.getCommunityList(communityType, page, size)
+        return communityService.getCommunityList(communityType, page, size, searchType, searchQuery)
     }
     @GetMapping("/mylist")
     fun getMyCommunityList(
         @RequestParam(defaultValue = "전체") communityType: String,
         @RequestParam(defaultValue = "0") page: Int,
-        @RequestParam(defaultValue = "10") size: Int
+        @RequestParam(defaultValue = "10") size: Int,
+        @RequestParam(required = false) searchType: String?,
+        @RequestParam(required = false) searchQuery: String?
     ): Map<String, Any> {
         val authentication = SecurityContextHolder.getContext().authentication
         val currentUserId = authentication?.principal as? String
-        return communityService.getMyCommunityList(currentUserId, communityType, page, size)
+        return communityService.getMyCommunityList(currentUserId, communityType, page, size, searchType, searchQuery)
     }
     @GetMapping("/detail")
     fun getCommunityDetail(@RequestParam communityId: Long): CommunityDetailResponseDTO {

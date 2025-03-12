@@ -35,12 +35,35 @@ class CommunityService (
         communityRepository.save(communityEntity)
         return ResponseDTO("COMMUNITY_CREATE_SUCCESS", "게시글이 저장되었습니다")
     }
-    fun getCommunityList(communityType: String, page: Int, size: Int): Map<String, Any> {
+    fun getCommunityList(
+        communityType: String,
+        page: Int,
+        size: Int,
+        searchType: String?,
+        searchQuery: String?
+    ): Map<String, Any> {
         val pageable: Pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("communityCreatedAt")))
-        val communityPage: Page<CommunityEntity> = if (communityType == "전체") {
-            communityRepository.findAll(pageable)
-        }else{
-            communityRepository.findByCommunityType(communityType, pageable)
+        val communityPage: Page<CommunityEntity> = when {
+            communityType == "전체" && searchQuery != null && searchType != null -> {
+                when (searchType) {
+                    "제목만" -> communityRepository.findByCommunityTitleContaining(searchQuery, pageable)
+                    "글작성자" -> communityRepository.findByCommunityAuthorContaining(searchQuery, pageable)
+                    else -> communityRepository.findAll(pageable)
+                }
+            }
+            communityType != "전체" && searchQuery != null && searchType != null -> {
+                when (searchType) {
+                    "제목만" -> communityRepository.findByCommunityTypeAndCommunityTitleContaining(communityType, searchQuery, pageable)
+                    "글작성자" -> communityRepository.findByCommunityTypeAndCommunityAuthorContaining(communityType, searchQuery, pageable)
+                    else -> communityRepository.findByCommunityType(communityType, pageable)
+                }
+            }
+            communityType == "전체" -> {
+                communityRepository.findAll(pageable)
+            }
+            else -> {
+                communityRepository.findByCommunityType(communityType, pageable)
+            }
         }
         val communityResponseDTOList = communityPage.content.map {
             CommunityResponseDTO(
@@ -56,18 +79,45 @@ class CommunityService (
             "totalPages" to communityPage.totalPages
         )
     }
-    fun getMyCommunityList(currentUserId: String?, communityType: String, page: Int, size: Int): Map<String, Any> {
+    fun getMyCommunityList(
+        currentUserId: String?,
+        communityType: String,
+        page: Int, size: Int,
+        searchType: String?,
+        searchQuery: String?
+    ): Map<String, Any> {
         val userProfileEntity = profileRepository.findByUser_UserId(currentUserId)
             ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "해당 유저의 프로필이 존재하지 않습니다")
         val pageable: Pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("communityCreatedAt")))
-        val communityPage: Page<CommunityEntity> = if (communityType == "전체") {
-            communityRepository.findByUserProfile_UserProfileId(userProfileEntity.userProfileId, pageable)
-        }else{
-            communityRepository.findByUserProfile_UserProfileIdAndCommunityType(
-                userProfileEntity.userProfileId,
-                communityType,
-                pageable
-            )
+        val communityPage: Page<CommunityEntity> = when {
+            communityType == "전체" && searchQuery != null && searchType != null -> {
+                when (searchType) {
+                    "제목만" -> communityRepository.findByUserProfile_UserProfileIdAndCommunityTitleContaining(userProfileEntity.userProfileId, searchQuery, pageable)
+                    "글작성자" -> communityRepository.findByUserProfile_UserProfileIdAndCommunityAuthorContaining(userProfileEntity.userProfileId, searchQuery, pageable)
+                    else -> communityRepository.findByUserProfile_UserProfileId(userProfileEntity.userProfileId, pageable)
+                }
+            }
+            communityType != "전체" && searchQuery != null && searchType != null -> {
+                when (searchType) {
+                    "제목만" -> communityRepository.findByUserProfile_UserProfileIdAndCommunityTypeAndCommunityTitleContaining(
+                        userProfileEntity.userProfileId,
+                        communityType,
+                        searchQuery,
+                        pageable)
+                    "글작성자" -> communityRepository.findByUserProfile_UserProfileIdAndCommunityTypeAndCommunityAuthorContaining(
+                        userProfileEntity.userProfileId,
+                        communityType,
+                        searchQuery,
+                        pageable)
+                    else -> communityRepository.findByUserProfile_UserProfileIdAndCommunityType(userProfileEntity.userProfileId, communityType, pageable)
+                }
+            }
+            communityType == "전체" -> {
+                communityRepository.findByUserProfile_UserProfileId(userProfileEntity.userProfileId, pageable)
+            }
+            else -> {
+                communityRepository.findByUserProfile_UserProfileIdAndCommunityType(userProfileEntity.userProfileId, communityType, pageable)
+            }
         }
         val communityResponseDTOList = communityPage.content.map {
             CommunityResponseDTO(
