@@ -8,4 +8,10 @@ import org.springframework.data.jpa.repository.JpaRepository
 interface CommunityRepository: JpaRepository<CommunityEntity, Long> {
     fun findByCommunityType(communityType: String, pageable: Pageable): Page<CommunityEntity>
     fun findByCommunityId(communityId: Long): CommunityEntity
+    fun findByUserProfile_UserProfileId(userProfileId: Long, pageable: Pageable): Page<CommunityEntity>
+    fun findByUserProfile_UserProfileIdAndCommunityType(
+        userProfileId: Long,
+        communityType: String,
+        pageable: Pageable
+    ): Page<CommunityEntity>
 }

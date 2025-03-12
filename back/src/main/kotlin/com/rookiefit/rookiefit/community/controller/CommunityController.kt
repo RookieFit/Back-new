@@ -48,6 +48,16 @@ class CommunityController(
     ): Map<String, Any> {
         return communityService.getCommunityList(communityType, page, size)
     }
+    @GetMapping("/mylist")
+    fun getMyCommunityList(
+        @RequestParam(defaultValue = "전체") communityType: String,
+        @RequestParam(defaultValue = "0") page: Int,
+        @RequestParam(defaultValue = "10") size: Int
+    ): Map<String, Any> {
+        val authentication = SecurityContextHolder.getContext().authentication
+        val currentUserId = authentication?.principal as? String
+        return communityService.getMyCommunityList(currentUserId, communityType, page, size)
+    }
     @GetMapping("/detail")
     fun getCommunityDetail(@RequestParam communityId: Long): CommunityDetailResponseDTO {
         return communityService.getCommunityDetail(communityId)

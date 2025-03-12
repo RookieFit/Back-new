@@ -56,6 +56,34 @@ class CommunityService (
             "totalPages" to communityPage.totalPages
         )
     }
+    fun getMyCommunityList(currentUserId: String?, communityType: String, page: Int, size: Int): Map<String, Any> {
+        val userProfileEntity = profileRepository.findByUser_UserId(currentUserId)
+            ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "해당 유저의 프로필이 존재하지 않습니다")
+        val pageable: Pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("communityCreatedAt")))
+        println("profileId: ${userProfileEntity.userProfileId}")
+        val communityPage: Page<CommunityEntity> = if (communityType == "전체") {
+            communityRepository.findByUserProfile_UserProfileId(userProfileEntity.userProfileId, pageable)
+        }else{
+            communityRepository.findByUserProfile_UserProfileIdAndCommunityType(
+                userProfileEntity.userProfileId,
+                communityType,
+                pageable
+            )
+        }
+        val communityResponseDTOList = communityPage.content.map {
+            CommunityResponseDTO(
+                communityId = it.communityId,
+                communityType = it.communityType,
+                communityTitle = it.communityTitle,
+                communityAuthor = it.communityAuthor,
+                communityCreatedAt = it.communityCreatedAt
+            )
+        }
+        return mapOf(
+            "content" to communityResponseDTOList,
+            "totalPages" to communityPage.totalPages
+        )
+    }
     fun getCommunityDetail(communityId: Long): CommunityDetailResponseDTO {
         val communityEntity = communityRepository.findByCommunityId(communityId)
         return CommunityDetailResponseDTO(

@@ -16,7 +16,7 @@ class CommunityEntity (
     var communityContent: String = "",
     var communityType: String = "",
     var communityCreatedAt: String = "",
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_profile_id")
     var userProfile: UserProfileEntity?,
     @OneToMany(mappedBy = "community", cascade = [(CascadeType.ALL)], orphanRemoval = true)
