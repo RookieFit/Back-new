@@ -60,7 +60,6 @@ class CommunityService (
         val userProfileEntity = profileRepository.findByUser_UserId(currentUserId)
             ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "해당 유저의 프로필이 존재하지 않습니다")
         val pageable: Pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("communityCreatedAt")))
-        println("profileId: ${userProfileEntity.userProfileId}")
         val communityPage: Page<CommunityEntity> = if (communityType == "전체") {
             communityRepository.findByUserProfile_UserProfileId(userProfileEntity.userProfileId, pageable)
         }else{
