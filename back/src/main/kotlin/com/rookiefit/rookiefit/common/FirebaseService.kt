@@ -72,5 +72,8 @@ class FirebaseService(
             }
         }
     }
-
+    fun extractImageUrls(content: String): Set<String> {
+        val regex = """https://firebasestorage\.googleapis\.com/v0/b/.+?\.jpg\?alt=media""".toRegex()
+        return regex.findAll(content).map { it.value }.toSet()
+    }
 }

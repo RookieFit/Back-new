@@ -2,6 +2,7 @@ package com.rookiefit.rookiefit.community.service
 
 import com.rookiefit.rookiefit.auth.dto.ResponseDTO
 import com.rookiefit.rookiefit.common.DateFormat
+import com.rookiefit.rookiefit.common.FirebaseService
 import com.rookiefit.rookiefit.community.dto.request.CommunityRequestDTO
 import com.rookiefit.rookiefit.community.dto.response.CommunityDetailResponseDTO
 import com.rookiefit.rookiefit.community.dto.response.CommunityResponseDTO
@@ -21,7 +22,8 @@ import org.springframework.web.server.ResponseStatusException
 @Service
 class CommunityService (
     private val profileRepository: UserProfileRepository,
-    private val communityRepository: CommunityRepository
+    private val communityRepository: CommunityRepository,
+    private val firebaseService: FirebaseService
 ){
     fun createCommunity(currentUserId: String?, communityRequestDTO: CommunityRequestDTO): ResponseDTO{
         val userProfileEntity = profileRepository.findByUser_UserId(currentUserId)
@@ -154,11 +156,15 @@ class CommunityService (
         val userProfileEntity = profileRepository.findByUser_UserId(currentUserId)
             ?: throw ResponseStatusException(HttpStatus.NOT_FOUND,"사용자를 찾을수 없습니다")
         val communityEntity = communityRepository.findByCommunityId(communityId)
+        val oldImages = firebaseService.extractImageUrls(communityEntity.communityContent)
         communityEntity.communityTitle = communityRequestDTO.communityTitle
         communityEntity.communityContent = communityRequestDTO.communityContent
         communityEntity.communityType = communityRequestDTO.communityType
         communityEntity.communityAuthor = userProfileEntity.userProfileNickname
         communityEntity.communityUpdatedAt = DateFormat.now()
+        val newImages = firebaseService.extractImageUrls(communityRequestDTO.communityContent)
+        val imagesToDelete = oldImages - newImages
+        firebaseService.deleteImageFiles(imagesToDelete.toList())
         return ResponseEntity.ok(ResponseDTO("UPDATE_COMMUNITY_SUCCESS", "게시글이 수정되었습니다"))
     }
     @Transactional
@@ -169,6 +175,8 @@ class CommunityService (
         if(communityEntity.userProfile?.userProfileId != userProfileEntity.userProfileId) {
             return ResponseEntity.badRequest().body(ResponseDTO("NOT_MATCH_USER", "작성자만 삭제가 가능합니다"))
         }else {
+            val imagesToDelete = firebaseService.extractImageUrls(communityEntity.communityContent)
+            firebaseService.deleteImageFiles(imagesToDelete.toList())
             communityRepository.delete(communityEntity)
             return ResponseEntity.ok(ResponseDTO("DELETE_COMMUNITY_SUCCESS", "게시글이 삭제되었습니다"))
         }
