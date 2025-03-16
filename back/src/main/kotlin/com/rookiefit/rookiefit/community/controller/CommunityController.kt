@@ -8,6 +8,7 @@ import com.rookiefit.rookiefit.community.service.CommunityService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -65,5 +66,12 @@ class CommunityController(
     @GetMapping("/detail")
     fun getCommunityDetail(@RequestParam communityId: Long): CommunityDetailResponseDTO {
         return communityService.getCommunityDetail(communityId)
+    }
+    @DeleteMapping("/deleteCommunity")
+    fun deleteCommunity(@RequestParam communityId: Long): ResponseEntity<ResponseDTO> {
+        val authentication = SecurityContextHolder.getContext().authentication
+        val currentUserId = authentication?.principal as? String
+        val responseBody = communityService.deleteCommunity(communityId, currentUserId);
+        return responseBody
     }
 }

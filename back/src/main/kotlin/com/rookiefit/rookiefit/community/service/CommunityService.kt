@@ -13,7 +13,9 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.server.ResponseStatusException
 
 @Service
@@ -142,5 +144,17 @@ class CommunityService (
             communityCreatedAt = communityEntity.communityCreatedAt,
             communityType = communityEntity.communityType
         )
+    }
+    @Transactional
+    fun deleteCommunity(communityId: Long, currentUserId: String?): ResponseEntity<ResponseDTO> {
+        val userProfileEntity = profileRepository.findByUser_UserId(currentUserId)
+            ?:throw ResponseStatusException(HttpStatus.NOT_FOUND, "유저 정보가 존재하지 않습니다")
+        val communityEntity = communityRepository.findByCommunityId(communityId)
+        if(communityEntity.userProfile?.userProfileId != userProfileEntity.userProfileId) {
+            return ResponseEntity.badRequest().body(ResponseDTO("NOT_MATCH_USER", "작성자만 삭제가 가능합니다"))
+        }else {
+            communityRepository.delete(communityEntity)
+            return ResponseEntity.ok(ResponseDTO("DELETE_COMMUNITY_SUCCESS", "게시글이 삭제되었습니다"))
+        }
     }
 }
