@@ -73,7 +73,8 @@ class CommunityService (
                 communityType = it.communityType,
                 communityTitle = it.communityTitle,
                 communityAuthor = it.communityAuthor,
-                communityCreatedAt = it.communityCreatedAt
+                communityCreatedAt = it.communityCreatedAt,
+                communityUpdatedAt = it.communityUpdatedAt?: "",
             )
         }
         return mapOf(
@@ -127,7 +128,8 @@ class CommunityService (
                 communityType = it.communityType,
                 communityTitle = it.communityTitle,
                 communityAuthor = it.communityAuthor,
-                communityCreatedAt = it.communityCreatedAt
+                communityCreatedAt = it.communityCreatedAt,
+                communityUpdatedAt = it.communityUpdatedAt?:""
             )
         }
         return mapOf(
@@ -142,8 +144,22 @@ class CommunityService (
             communityContent = communityEntity.communityContent,
             communityAuthor = communityEntity.communityAuthor,
             communityCreatedAt = communityEntity.communityCreatedAt,
-            communityType = communityEntity.communityType
+            communityType = communityEntity.communityType,
+            userProfileId = communityEntity.userProfile?.userProfileId ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "작성자가 존재하지 않습니다."),
+            communityUpdatedAt = communityEntity.communityUpdatedAt?:"",
         )
+    }
+    @Transactional
+    fun updateCommunity(currentUserId: String?, communityId: Long, communityRequestDTO: CommunityRequestDTO): ResponseEntity<ResponseDTO> {
+        val userProfileEntity = profileRepository.findByUser_UserId(currentUserId)
+            ?: throw ResponseStatusException(HttpStatus.NOT_FOUND,"사용자를 찾을수 없습니다")
+        val communityEntity = communityRepository.findByCommunityId(communityId)
+        communityEntity.communityTitle = communityRequestDTO.communityTitle
+        communityEntity.communityContent = communityRequestDTO.communityContent
+        communityEntity.communityType = communityRequestDTO.communityType
+        communityEntity.communityAuthor = userProfileEntity.userProfileNickname
+        communityEntity.communityUpdatedAt = DateFormat.now()
+        return ResponseEntity.ok(ResponseDTO("UPDATE_COMMUNITY_SUCCESS", "게시글이 수정되었습니다"))
     }
     @Transactional
     fun deleteCommunity(communityId: Long, currentUserId: String?): ResponseEntity<ResponseDTO> {

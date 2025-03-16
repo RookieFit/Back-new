@@ -16,6 +16,7 @@ class CommunityEntity (
     var communityContent: String = "",
     var communityType: String = "",
     var communityCreatedAt: String = "",
+    var communityUpdatedAt: String = "",
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_profile_id")
     var userProfile: UserProfileEntity?,

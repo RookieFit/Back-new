@@ -6,4 +6,6 @@ data class CommunityDetailResponseDTO(
     val communityAuthor: String,
     val communityCreatedAt: String,
     val communityContent: String,
+    val userProfileId: Long,
+    val communityUpdatedAt: String = "",
 )

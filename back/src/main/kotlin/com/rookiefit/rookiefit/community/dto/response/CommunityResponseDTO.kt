@@ -5,5 +5,6 @@ data class CommunityResponseDTO(
     val communityType: String,
     val communityTitle: String,
     val communityAuthor: String,
-    val communityCreatedAt: String
+    val communityCreatedAt: String,
+    val communityUpdatedAt: String = ""
 )
