@@ -1,6 +1,7 @@
 package com.rookiefit.rookiefit.common.googlePlace
 
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -18,10 +19,12 @@ class GooglePlaceController(private val restTemplate: RestTemplate) {
     @GetMapping("/autocomplete")
     fun autocomplete(@RequestParam query: String?): ResponseEntity<List<String>> {
         val url = "$googlePlacesUrl?input=$query&key=$googleApiKey&components=country:KR&types=geocode"
-
-        val response = restTemplate.getForObject(url, GooglePlacesResponse::class.java)
-        val predictions = response?.predictions?.map{it.description}?: emptyList()
-        return ResponseEntity.ok(predictions)
+        return try {
+            val response = restTemplate.getForObject(url, GooglePlacesResponse::class.java)
+            val predictions = response?.predictions?.map{it.description}?: emptyList()
+            ResponseEntity.ok(predictions)}
+        catch(ex: Exception){
+            ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(emptyList())
+        }
     }
-
 }
