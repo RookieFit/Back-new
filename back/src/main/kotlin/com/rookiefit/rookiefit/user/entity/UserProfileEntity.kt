@@ -1,6 +1,7 @@
 package com.rookiefit.rookiefit.user.entity
 
 import com.rookiefit.rookiefit.auth.entity.UserEntity
+import com.rookiefit.rookiefit.community.entity.CommunityEntity
 import com.rookiefit.rookiefit.workout.entity.WorkoutEntity
 import jakarta.persistence.*
 
@@ -24,5 +25,5 @@ class UserProfileEntity (
     @OneToMany(mappedBy = "userProfile", cascade = [(CascadeType.REMOVE)])
     var WorkoutEntity : MutableList<WorkoutEntity> = mutableListOf(),
     @OneToMany(mappedBy = "userProfile", cascade = [(CascadeType.REMOVE)])
-    var CommunityEntity : MutableList<WorkoutEntity> = mutableListOf(),
+    var CommunityEntity : MutableList<CommunityEntity> = mutableListOf(),
     )
