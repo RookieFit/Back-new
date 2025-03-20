@@ -141,13 +141,13 @@ class WorkoutService(
             }
             workoutImageRepository.deleteByWorkout_WorkoutId(existingWorkoutEntity.workoutId)
             val imageUris = firebaseService.uploadImageFiles(images)
-            val newImageEntities = imageUris.map { imageUrl ->
+            val newImageEntities = imageUris?.map { imageUrl ->
                 WorkoutImageUriEntity(
                     workoutImageUri = imageUrl,
                     workoutImageUriCreatedDate = workoutDTO.workoutCreatedDate,
                     workout = existingWorkoutEntity
                 )
-            }
+            } ?: emptyList()
             workoutImageRepository.saveAll(newImageEntities) // 새로운 이미지 저장
         }
 

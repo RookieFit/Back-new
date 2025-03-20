@@ -47,8 +47,8 @@ class FirebaseService(
 
         return downloadUri
     }
-    fun uploadImageFiles(imageList: List<MultipartFile>): List<String> {
-        return imageList.map { uploadImageFile(it) }
+    fun uploadImageFiles(imageList: List<MultipartFile>?): List<String>? {
+        return imageList?.map { uploadImageFile(it) }
     }
     fun deleteImageFile(imageUri: String) {
         val buckName = "rookiefit-edf53"
@@ -72,5 +72,8 @@ class FirebaseService(
             }
         }
     }
-
+    fun extractImageUrls(content: String): Set<String> {
+        val regex = """https://firebasestorage\.googleapis\.com/v0/b/.+?\.jpg\?alt=media""".toRegex()
+        return regex.findAll(content).map { it.value }.toSet()
+    }
 }
