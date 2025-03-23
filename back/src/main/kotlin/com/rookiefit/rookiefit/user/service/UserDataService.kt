@@ -5,8 +5,7 @@ import com.rookiefit.rookiefit.auth.repository.UserRepository
 import com.rookiefit.rookiefit.common.FirebaseService
 import com.rookiefit.rookiefit.user.dto.UserInfoDTO
 import com.rookiefit.rookiefit.user.dto.UserProfileDTO
-import com.rookiefit.rookiefit.user.dto.response.UserInfoResponseDTO
-import com.rookiefit.rookiefit.user.dto.response.UserProfileResponseDTO
+import com.rookiefit.rookiefit.user.dto.response.*
 import com.rookiefit.rookiefit.user.entity.UserInfoEntity
 import com.rookiefit.rookiefit.user.repository.UserInfoRepository
 import com.rookiefit.rookiefit.user.repository.UserProfileRepository
@@ -127,5 +126,26 @@ class UserDataService(
             userInfoMuscleMass = latestUserInfo.userInfoMuscleMass,
             userInfoFatMass = latestUserInfo.userInfoFatMass
         )
+    }
+
+    fun getUserWeightData(currentUserId: String?): List<UserWeightResponseDTO> {
+        val userProfileEntity = userProfileRepository.findByUser_UserId(currentUserId)
+            ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "존재하지 않는 사용자")
+        return userInfoRepository.findTop7ByUserProfile_UserProfileIdOrderByUserInfoInbodyDateAsc(userProfileEntity.userProfileId)
+            ?.map { UserWeightResponseDTO(it.userInfoWeight.toString(), it.userInfoInbodyDate.toString()) } ?: emptyList()
+    }
+
+    fun getuserMuscledata(currentUserId: String?): List<UserMuscleResponseDTO> {
+        val userProfileEntity = userProfileRepository.findByUser_UserId(currentUserId)
+            ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "존재하지 않는 사용자")
+        return userInfoRepository.findTop7ByUserProfile_UserProfileIdOrderByUserInfoInbodyDateAsc(userProfileEntity.userProfileId)
+            ?.map { UserMuscleResponseDTO(it.userInfoMuscleMass.toString(), it.userInfoInbodyDate.toString()) } ?: emptyList()
+    }
+
+    fun getuserFatdata(currentUserId: String?): List<UserFatResponseDTO> {
+        val userProfileEntity = userProfileRepository.findByUser_UserId(currentUserId)
+            ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "존재하지 않는 사용자")
+        return userInfoRepository.findTop7ByUserProfile_UserProfileIdOrderByUserInfoInbodyDateAsc(userProfileEntity.userProfileId)
+            ?.map { UserFatResponseDTO(it.userInfoFatMass.toString(), it.userInfoInbodyDate.toString()) } ?: emptyList()
     }
 }

@@ -3,8 +3,7 @@ package com.rookiefit.rookiefit.user.controller
 import com.rookiefit.rookiefit.auth.dto.ResponseDTO
 import com.rookiefit.rookiefit.user.dto.UserInfoDTO
 import com.rookiefit.rookiefit.user.dto.UserProfileDTO
-import com.rookiefit.rookiefit.user.dto.response.UserInfoResponseDTO
-import com.rookiefit.rookiefit.user.dto.response.UserProfileResponseDTO
+import com.rookiefit.rookiefit.user.dto.response.*
 import com.rookiefit.rookiefit.user.service.UserDataService
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -55,6 +54,30 @@ class UserDataController(
         val authentication = SecurityContextHolder.getContext().authentication
         val currentUserId = authentication?.principal as String
         val responseBody = userDataService.getUserInfo(currentUserId)
+        return responseBody
+    }
+
+    @GetMapping("/getuserweightdata")
+    fun getUserWeightData(): List<UserWeightResponseDTO> {
+        val authentication = SecurityContextHolder.getContext().authentication
+        val currentUserId = authentication?.principal as String
+        val responseBody = userDataService.getUserWeightData(currentUserId)
+        return responseBody
+    }
+
+    @GetMapping("/getusermuscledata")
+    fun getuserMuscledata(): List<UserMuscleResponseDTO> {
+        val authentication = SecurityContextHolder.getContext().authentication
+        val currentUserId = authentication?.principal as String
+        val responseBody = userDataService.getuserMuscledata(currentUserId)
+        return responseBody
+    }
+
+    @GetMapping("/getuserfatdata")
+    fun getuserFatdata(): List<UserFatResponseDTO> {
+        val authentication = SecurityContextHolder.getContext().authentication
+        val currentUserId = authentication?.principal as String
+        val responseBody = userDataService.getuserFatdata(currentUserId)
         return responseBody
     }
 }
