@@ -8,6 +8,7 @@ import com.rookiefit.rookiefit.community.dto.response.CommunityDetailResponseDTO
 import com.rookiefit.rookiefit.community.dto.response.CommunityResponseDTO
 import com.rookiefit.rookiefit.community.entity.CommunityEntity
 import com.rookiefit.rookiefit.community.repository.CommunityRepository
+import com.rookiefit.rookiefit.community.repository.CommunitySpecification
 import com.rookiefit.rookiefit.user.repository.UserProfileRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
@@ -46,29 +47,9 @@ class CommunityService (
         searchType: String?,
         searchQuery: String?
     ): Map<String, Any> {
-        val pageable: Pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("communityCreatedAt")))
-        val communityPage: Page<CommunityEntity> = when {
-            communityType == "전체" && searchQuery != null && searchType != null -> {
-                when (searchType) {
-                    "제목만" -> communityRepository.findByCommunityTitleContaining(searchQuery, pageable)
-                    "글작성자" -> communityRepository.findByCommunityAuthorContaining(searchQuery, pageable)
-                    else -> communityRepository.findAll(pageable)
-                }
-            }
-            communityType != "전체" && searchQuery != null && searchType != null -> {
-                when (searchType) {
-                    "제목만" -> communityRepository.findByCommunityTypeAndCommunityTitleContaining(communityType, searchQuery, pageable)
-                    "글작성자" -> communityRepository.findByCommunityTypeAndCommunityAuthorContaining(communityType, searchQuery, pageable)
-                    else -> communityRepository.findByCommunityType(communityType, pageable)
-                }
-            }
-            communityType == "전체" -> {
-                communityRepository.findAll(pageable)
-            }
-            else -> {
-                communityRepository.findByCommunityType(communityType, pageable)
-            }
-        }
+        val (pageable, titleQuery, authorQuery) = createPageableAndFilters(page, size, searchType, searchQuery)
+        val spec = CommunitySpecification.filterBy(communityType, null, titleQuery, authorQuery)
+        val communityPage: Page<CommunityEntity> = communityRepository.findAll(spec, pageable)
         val communityResponseDTOList = communityPage.content.map {
             CommunityResponseDTO(
                 communityId = it.communityId,
@@ -93,37 +74,9 @@ class CommunityService (
     ): Map<String, Any> {
         val userProfileEntity = profileRepository.findByUser_UserId(currentUserId)
             ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "해당 유저의 프로필이 존재하지 않습니다")
-        val pageable: Pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("communityCreatedAt")))
-        val communityPage: Page<CommunityEntity> = when {
-            communityType == "전체" && searchQuery != null && searchType != null -> {
-                when (searchType) {
-                    "제목만" -> communityRepository.findByUserProfile_UserProfileIdAndCommunityTitleContaining(userProfileEntity.userProfileId, searchQuery, pageable)
-                    "글작성자" -> communityRepository.findByUserProfile_UserProfileIdAndCommunityAuthorContaining(userProfileEntity.userProfileId, searchQuery, pageable)
-                    else -> communityRepository.findByUserProfile_UserProfileId(userProfileEntity.userProfileId, pageable)
-                }
-            }
-            communityType != "전체" && searchQuery != null && searchType != null -> {
-                when (searchType) {
-                    "제목만" -> communityRepository.findByUserProfile_UserProfileIdAndCommunityTypeAndCommunityTitleContaining(
-                        userProfileEntity.userProfileId,
-                        communityType,
-                        searchQuery,
-                        pageable)
-                    "글작성자" -> communityRepository.findByUserProfile_UserProfileIdAndCommunityTypeAndCommunityAuthorContaining(
-                        userProfileEntity.userProfileId,
-                        communityType,
-                        searchQuery,
-                        pageable)
-                    else -> communityRepository.findByUserProfile_UserProfileIdAndCommunityType(userProfileEntity.userProfileId, communityType, pageable)
-                }
-            }
-            communityType == "전체" -> {
-                communityRepository.findByUserProfile_UserProfileId(userProfileEntity.userProfileId, pageable)
-            }
-            else -> {
-                communityRepository.findByUserProfile_UserProfileIdAndCommunityType(userProfileEntity.userProfileId, communityType, pageable)
-            }
-        }
+        val (pageable, titleQuery, authorQuery) = createPageableAndFilters(page, size, searchType, searchQuery)
+        val spec = CommunitySpecification.filterBy(communityType, userProfileEntity.userProfileId, titleQuery, authorQuery)
+        val communityPage: Page<CommunityEntity> = communityRepository.findAll(spec, pageable)
         val communityResponseDTOList = communityPage.content.map {
             CommunityResponseDTO(
                 communityId = it.communityId,
@@ -180,5 +133,13 @@ class CommunityService (
             communityRepository.delete(communityEntity)
             return ResponseEntity.ok(ResponseDTO("DELETE_COMMUNITY_SUCCESS", "게시글이 삭제되었습니다"))
         }
+    }
+    private fun createPageableAndFilters(
+        page: Int, size: Int, searchType: String?, searchQuery: String?
+    ): Triple<Pageable, String?, String?> {
+        val pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("communityCreatedAt")))
+        val titleQuery = if (searchType == "제목만") searchQuery else null
+        val authorQuery = if (searchType == "글작성자") searchQuery else null
+        return Triple(pageable, titleQuery, authorQuery)
     }
 }
