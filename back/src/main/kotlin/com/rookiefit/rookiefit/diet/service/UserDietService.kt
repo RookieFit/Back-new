@@ -28,16 +28,20 @@ class UserDietService(
 
     // 식단에 음식 추가
     @Transactional
-    fun addFoodToDiet(request: AddFoodToDietRequest): UserDietDto {
-        val user = userRepository.findById(request.userId)
-            .orElseThrow { IllegalArgumentException("User not found: ${request.userId}") }
+    fun addFoodToDiet(userId: String, request: AddFoodToDietRequest): UserDietDto {
+        val user = userRepository.findById(userId)
+            .orElseThrow { IllegalArgumentException("User not found: $userId") }
 
-        val userDiet = userDietRepository.findByUser_UserIdAndDietDate(request.userId, request.dietDate)
+        val userDiet = userDietRepository.findByUser_UserIdAndDietDate(userId, request.dietDate)
             ?: UserDietEntity(user = user, dietDate = request.dietDate).also {
                 userDietRepository.save(it)
             }
 
-        // 음식 추가
+        // 기존 데이터 삭제 (DB에서도 삭제)
+        userDietDetailRepository.deleteAll(userDiet.details)
+        userDiet.details.clear()
+
+        // 새 음식 추가
         val foodDetails = request.dietDetails.map { detail ->
             val foodInfo = foodInfoRepository.findByFoodName(detail.foodName)
                 ?: throw IllegalArgumentException("${detail.foodName} 식품이 존재하지 않습니다.")
@@ -54,18 +58,15 @@ class UserDietService(
             )
         }
 
-        // 기존 데이터 삭제 후 새 데이터 추가 (덮어쓰기 개념)
-        userDiet.details.clear()
         userDiet.details.addAll(foodDetails)
-
         userDiet.updateTotalCalories()
 
         return UserDietDto.fromEntity(userDietRepository.save(userDiet))
     }
 
     // 식단에서 특정 음식 삭제
-    @Transactional
-    fun deleteFoodFromDiet(userDietDetailId: Long): ResponseEntity<String> {
+    /*@Transactional
+    fun deleteFoodFromDiet(userId: String, userDietDetailId: Long): ResponseEntity<String> {
         val userDietDetail = userDietDetailRepository.findById(userDietDetailId)
             .orElseThrow { IllegalArgumentException("해당 음식이 식단에 존재하지 않습니다.") }
 
@@ -84,7 +85,7 @@ class UserDietService(
         userDietRepository.save(userDiet)
 
         return ResponseEntity.ok("음식이 성공적으로 삭제되었습니다.")
-    }
+    }*/
 
     // 특정 날짜의 식단 삭제
     @Transactional
