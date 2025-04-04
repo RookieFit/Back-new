@@ -156,4 +156,10 @@ class WorkoutService(
         return ResponseDTO("UPDATE_SUCCESS", "운동 기록이 성공적으로 업데이트되었습니다.")
     }
 
+    fun getDailyCalorie(currentUserId: String): List<Int>{
+        val userProfileEntity = userProfileRepository.findByUser_UserId(currentUserId)
+            ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "존재하지 않는 유저")
+        val userWorkoutEntites = workoutRepository.findByUserProfile_UserProfileId(userProfileEntity.userProfileId)
+        return userWorkoutEntites.map{it.dailyCaloriesBurned}
+    }
 }

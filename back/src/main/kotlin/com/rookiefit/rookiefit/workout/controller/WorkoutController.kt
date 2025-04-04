@@ -51,4 +51,11 @@ class WorkoutController(
         val responseBody = workoutService.updateWorkout(currentUserId, workoutDTO, images)
         return ResponseEntity.status(HttpStatus.OK).body(responseBody)
     }
+    @GetMapping("/getdailycalorie")
+    fun getDailyCalorie(): List<Int> {
+        val authentication = SecurityContextHolder.getContext().authentication
+        val currentUserId = authentication?.principal as String
+        val responseBody = workoutService.getDailyCalorie(currentUserId)
+        return responseBody
+    }
 }
