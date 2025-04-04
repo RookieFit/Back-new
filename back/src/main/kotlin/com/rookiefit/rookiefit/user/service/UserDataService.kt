@@ -148,4 +148,14 @@ class UserDataService(
         return userInfoRepository.findTop7ByUserProfile_UserProfileIdOrderByUserInfoInbodyDateAsc(userProfileEntity.userProfileId)
             ?.map { UserFatResponseDTO(it.userInfoFatMass.toString(), it.userInfoInbodyDate.toString()) } ?: emptyList()
     }
+
+    fun getBasalMetabolicRate(currentUserId: String?): Double {
+        val userProfileEntity = userProfileRepository.findByUser_UserId(currentUserId)
+            ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "존재하지 않는 사용자")
+        val userInfoEntity =
+            userInfoRepository.findTopByUserProfile_UserProfileIdOrderByUserInfoInbodyDateDesc(
+                userProfileEntity.userProfileId
+            ) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "기초대사량 데이터가 존재하지 않습니다")
+        return userInfoEntity.userInfoBasalMetabolicRate
+    }
 }
