@@ -2,6 +2,7 @@ package com.rookiefit.rookiefit.workout.controller
 
 import com.rookiefit.rookiefit.auth.dto.ResponseDTO
 import com.rookiefit.rookiefit.workout.dto.WorkoutDTO
+import com.rookiefit.rookiefit.workout.dto.response.DailyCaloriesResponseDTO
 import com.rookiefit.rookiefit.workout.dto.response.WorkoutDetailResponseDTO
 import com.rookiefit.rookiefit.workout.dto.response.WorkoutResponseDTO
 import com.rookiefit.rookiefit.workout.service.WorkoutService
@@ -52,7 +53,7 @@ class WorkoutController(
         return ResponseEntity.status(HttpStatus.OK).body(responseBody)
     }
     @GetMapping("/getdailycalorie")
-    fun getDailyCalorie(): List<Int> {
+    fun getDailyCalorie(): List<DailyCaloriesResponseDTO> {
         val authentication = SecurityContextHolder.getContext().authentication
         val currentUserId = authentication?.principal as String
         val responseBody = workoutService.getDailyCalorie(currentUserId)

@@ -9,4 +9,5 @@ interface WorkoutRepository: JpaRepository<WorkoutEntity, Long> {
         workoutCreatedDate: String
     ) : WorkoutEntity
     fun findByUserProfile_UserProfileId(userProfileId: Long): List<WorkoutEntity>
+    fun findTop7ByUserProfile_UserProfileIdOrderByWorkoutCreatedDate(userProfileId: Long): List<WorkoutEntity>
 }
