@@ -4,6 +4,7 @@ import com.rookiefit.rookiefit.auth.dto.ResponseDTO
 import com.rookiefit.rookiefit.common.FirebaseService
 import com.rookiefit.rookiefit.user.repository.UserProfileRepository
 import com.rookiefit.rookiefit.workout.dto.WorkoutDTO
+import com.rookiefit.rookiefit.workout.dto.response.DailyCaloriesResponseDTO
 import com.rookiefit.rookiefit.workout.dto.response.WorkoutDetailResponseDTO
 import com.rookiefit.rookiefit.workout.dto.response.WorkoutResponseDTO
 import com.rookiefit.rookiefit.workout.entity.WorkoutDetailEntity
@@ -72,6 +73,7 @@ class WorkoutService(
                 workoutTitle = entity.workoutTitle,
                 workoutComment = entity.workoutComment,
                 workoutCreatedDate = entity.workoutCreatedDate,
+                dailyCaloriesBurned = entity.dailyCaloriesBurned,
                 workoutImageUris = workoutImageRepository.findByWorkout(entity).map { it.workoutImageUri }
             )
         }
@@ -156,4 +158,19 @@ class WorkoutService(
         return ResponseDTO("UPDATE_SUCCESS", "운동 기록이 성공적으로 업데이트되었습니다.")
     }
 
+    fun getDailyCalorie(currentUserId: String): List<DailyCaloriesResponseDTO>{
+        val userProfileEntity = userProfileRepository.findByUser_UserId(currentUserId)
+            ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "존재하지 않는 유저")
+        val userWorkoutEntites =
+            workoutRepository
+                .findTop7ByUserProfile_UserProfileIdOrderByWorkoutCreatedDate(
+                    userProfileEntity.userProfileId
+                )
+        return userWorkoutEntites.map {
+            entity -> DailyCaloriesResponseDTO(
+            workoutCreatedDate = entity.workoutCreatedDate,
+            dailyCaloriesBurned = entity.dailyCaloriesBurned
+            )
+        }
+    }
 }

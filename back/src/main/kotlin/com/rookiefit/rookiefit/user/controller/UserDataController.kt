@@ -4,6 +4,8 @@ import com.rookiefit.rookiefit.auth.dto.ResponseDTO
 import com.rookiefit.rookiefit.user.dto.UserInfoDTO
 import com.rookiefit.rookiefit.user.dto.UserProfileDTO
 import com.rookiefit.rookiefit.user.dto.response.*
+import com.rookiefit.rookiefit.user.repository.UserInfoRepository
+import com.rookiefit.rookiefit.user.repository.UserProfileRepository
 import com.rookiefit.rookiefit.user.service.UserDataService
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -16,11 +18,14 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestPart
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
+import org.springframework.web.server.ResponseStatusException
 
 @RestController
 @RequestMapping("/api/user/userdata")
 class UserDataController(
-    private val userDataService: UserDataService
+    private val userDataService: UserDataService,
+    private val userProfileRepository: UserProfileRepository,
+    private val userInfoRepository: UserInfoRepository
 ) {
     @PostMapping(value = ["/createprofile"], consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
     fun updateUserData(
@@ -78,6 +83,14 @@ class UserDataController(
         val authentication = SecurityContextHolder.getContext().authentication
         val currentUserId = authentication?.principal as String
         val responseBody = userDataService.getuserFatdata(currentUserId)
+        return responseBody
+    }
+
+    @GetMapping("/getbasalmetabolicrate")
+    fun getBasalMetabolicRate(): Double {
+        val authentication = SecurityContextHolder.getContext().authentication
+        val currentUserId = authentication?.principal as String
+        val responseBody = userDataService.getBasalMetabolicRate(currentUserId)
         return responseBody
     }
 }

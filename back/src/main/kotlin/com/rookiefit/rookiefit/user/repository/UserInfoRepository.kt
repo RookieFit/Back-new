@@ -7,4 +7,5 @@ interface UserInfoRepository: JpaRepository<UserInfoEntity, Long> {
     fun findByUserProfile_UserProfileId(userProfileId: Long): List<UserInfoEntity>?
     fun findByUserInfoInbodyDate( userInfoInBodyDate: String): UserInfoEntity?
     fun findTop7ByUserProfile_UserProfileIdOrderByUserInfoInbodyDateAsc(userProfileId: Long): List<UserInfoEntity>?
+    fun findTopByUserProfile_UserProfileIdOrderByUserInfoInbodyDateDesc(userProfileId: Long): UserInfoEntity?
 }
