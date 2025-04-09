@@ -88,4 +88,10 @@ class UserService(
         response.addCookie(refreshTokenCookie)
         return accessToken
     }
+
+    // 전화번호로 아이디를 찾는 메서드 추가
+    fun findUserIdByPhoneNumber(userPhoneNumber: String): String? {
+        val user = userRepository.findByUserPhoneNumber(userPhoneNumber)
+        return user?.userId
+    }
 }
