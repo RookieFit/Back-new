@@ -91,7 +91,19 @@ class UserService(
 
     // 전화번호로 아이디를 찾는 메서드 추가
     fun findUserIdByPhoneNumber(userPhoneNumber: String): String? {
-        val user = userRepository.findByUserPhoneNumber(userPhoneNumber)
-        return user?.userId
+        val user = userRepository.findByUserPhoneNumber(userPhoneNumber) ?: return null
+        return maskUserId(user.userId)
+    }
+
+    // 아이디 마스킹 처리 함수 추가
+    private fun maskUserId(userId: String): String {
+        if (userId.length <= 4) {
+            return "*".repeat(userId.length)
+        }
+
+        val visiblePart = userId.substring(0, userId.length - 4)
+        val maskedPart = "*".repeat(4)
+
+        return visiblePart + maskedPart
     }
 }
