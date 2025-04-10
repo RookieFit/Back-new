@@ -46,4 +46,20 @@ class UserController(
         val accessToken = userService.signIn(signInRequestDTO, response)
         return accessToken
     }
+
+    @PostMapping("/find-id")
+    fun findUserId(
+        @RequestParam userPhoneNumber: String,
+        @RequestParam verificationCode: String // 인증번호는 현재 검증하지 않음
+    ): ResponseEntity<Map<String, Any>> {
+        val userId = userService.findUserIdByPhoneNumber(userPhoneNumber)
+        return if (userId != null) {
+            ResponseEntity.ok(mapOf("userId" to userId))
+        } else {
+            ResponseEntity.ok(mapOf(
+                "code" to "USER_NOT_FOUND",
+                "message" to "해당 전화번호로 등록된 사용자가 없습니다"
+            ))
+        }
+    }
 }
